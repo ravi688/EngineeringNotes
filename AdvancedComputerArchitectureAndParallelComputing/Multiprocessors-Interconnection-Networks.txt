@@ -1,0 +1,44 @@
+
+MULTIPROCESSORS INTERCONNECTION NETWORKS
+---------------------------------------------
+
+Two schemes are introduced, namely static and dynamic interconnection networks.
+Static networks form all connections when the system is designed rather than
+when the connection is needed. In a static network, messages must be routed
+along established links. Dynamic interconnection networks establish connections
+between two or more nodes on othe fly as messages are routed along the links.
+
+Interconnection Networks Taxonomy
+----------------------------------
+Static networks can be further classified according to their interconnection 
+pattern as one-dimension (1D), two-dimension (2D), or hypercube (HC).
+
+Dynamic networks can be classified based on interconnection scheme as bus-based
+versus switch-based. Bus-based networks can further be classified as single bus
+or multiple buses.
+Switch based dynamic networks can be classified according to the structure of
+the interconnection network as single-stage (SS), multistage (MS), or crossbar
+networks.
+
+BUS-BASED DYNAMIC INTERCONNECTION NETWORKS
+---------------------------------------------
+
+Single Bus Systems
+-------------------
+Such a system consists of N processors, each having its own cache, connected by
+a shared bus. The use of local caches reduces the processor - memory traffic.
+All processors communicate with a single shared memroy.
+The typical size of such a system varies between 2 and 50 processors.
+The actual size is determined by the traffic per processor and the bus 
+bandwidth (defined as the maximum rate at which the bus can propagate data 
+once transmission has started).
+The single bus network complexity, measured in terms of the number of buses
+used, is O(1), while the time complexity, measured in terms of the amount
+of input to output delay is O(N).
+
+Although simple and easy to expand, single bus multiprocessors are inherently
+limied by the bandwidth of the bus and the fact that only one processor can
+access the bus, and in turn only one memory access can take place at any given
+time.
+
+

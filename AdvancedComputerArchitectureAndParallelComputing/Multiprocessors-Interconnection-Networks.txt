@@ -41,4 +41,118 @@ limied by the bandwidth of the bus and the fact that only one processor can
 access the bus, and in turn only one memory access can take place at any given
 time.
 
+Multiple Bus Systems
+----------------------
+
+A multiple bus multiprocessor system uses several parallel buses to interconnect multiple 
+processors and multiple memory modules.
+A number of multiple connection schemes are possible in this case. Among the possibilities are
+the multiple bus with full bus-memory connection (MBFBMC), multiple bus with single bus memory
+connection (MBSBMC), multiple bus with partial bus-memory connection (MBPBMC), and multiple bus
+with clas-based memory connection (MBCBMC).
+
+Multiple bus with full bus-memory connection has all memory modules connected to all buses.
+The multiple bus with single bus - memory connection has each memory module connected to a specific
+bus.
+The multiple bus with partial bus-memory connection has each memory modules connected to a subset
+of buses.
+A class is just an arbitrary collection of memory modules.
+
+In general, multiple bus multiprocessor organization offers a number of desirable features such 
+as high reliability and ease of incremental growth. A single bus failure will leave (B - 1) 
+distict fault-free paths between the processors and the memory modules.
+On the other hand, when the number of buses is less than the number of memory modules (or the 
+number of processors), bus contention is expected to increase.
+
+Bus Synchronization
+-----------------------
+
+A bus can be classified as synchronous or asynchronous. 
+
+The time for any transaction over a synchronous bus is known in advance.
+In accepting and/or generating information over the bus, devices take the transaction time into
+account. Asynchronous bus, on the other hand, depends on the availability of data and the
+readiness of devices to initiate bus transactions.
+
+In a single bus multiprocessor system, bus arbitration is required in order to resolve the bus
+contention that takes place when more than one procesor competes to access the bus. 
+In this case, processors that want to use the bus submit their requrests to bus arbitration logic.
+The latter decides, using a certain priority scheme, which processor will be granted access to 
+the bus during a certain time interval (bus master). The process of passing bus mastership from
+one processor to another is called handshaking and requres the use of two control signals: bus
+request and bus grant. The first indicates that given processor is requesting master-ship of the bus,
+while the second indicates that bus mastership is granted. A third signal, called bus busy,
+is usually used to indicate whether or not the bus is currently being used.
+
+Among the priority schemes used are random, simple rotating priority, equal priority, and least
+recently used (LRU) priority. After each arbitration cycle, in simple rotating priority, all
+priority levels are reduced one place, with the lowest priority processor taking the highest
+priority.
+In the LRU algorithm, the highest priority is given to the processor that has not used the bus
+for the longest time.
+
+
+SWITCH-BASED INTERCONNECTION NETWORKS
+-----------------------------------------
+
+In this type of network, connections among processors and memory modules are made using simple
+switches. Three basic interconnection topologies exist: crossbar, single-stage, and multistage.
+
+Crossbar Networks
+-----------------
+A crossbar network represents the other extreme to the limited single bus network.
+While the single bus can provide only a single connection, the crossbar can provide simultaneous
+connections among all its inputs and all its outputs.
+The crossbar contains a switching element (SE) at the intersection of any two lines extended
+horizontally or vertically inside the switch.
+
+
+In general for an N x N crossbar, the network complexity, measured in terms of the number of
+switching points, is O(N ^ 2) while the time complexity, measured in terms of the input to
+outpout delay, is O(1). It should be noted that the complexity of the crossbar network
+pays off in the form of reduction in the time complexity. Notice also that the corssbar
+is a nonblocking net-work that allows a multiple input-output connection pattern (permutation)
+to be achieved simultaneously. However, for a large multiprocessor system the complexity of 
+the crossbar can become a dominant financial factor.
+
+
+EXTERNAL NOTES:
+---------------
+Integer lattice: In mathematics, the n-dimensional integer lattic (or cubic lattice),
+denoted Z^n, is the lattice in the Euclidean space R^n whose lattice points are n-tuples of
+integers. The two-dimensional integer lattice is also called the square lattice, or grid lattice.
+Z^n is the simplest example of a root lattice. The integer lattice is an odd unimodular lattice.
+
+In graph theory, the shuffle-exchange network is an undirected cubic multigraph, whose vertices
+represent binary sequences of a given length and whose edges represent two operations on these
+sequence, circular shifts and flipping the lowest-order bit.
+
+The shuffle-exhange network of order d consisted of an array of 2^d cells, numbered by the 2^d
+different binary numbers that can be represented with d bits.
+These cells werer connected by communications links in two different patterns: "exchange" links
+in which each cell is connected to the cell numbered with the opposite value in its lowest-order
+bit, and "shuffle" links in which each cell is connected to the cell whose number is obtained
+by a circular shift that shifts every bit to the next more significant position, except for the 
+highest-order bit which shifts into the lowest-order position. The "exchange" links are 
+bidirectional, while the "shuffle" links can only transfer information in one direction, from
+a cell to its circular shift.
+
+The advantage of this communications pattern, over earlier methods, is that it allows information
+to be rapidly transferred through a small number of steps from any vertex in the network to any
+other vertex, while only requiring a single bit of control information (which of the two
+communications links to use) for each communications step. Fast parallel algorithms for basic
+problems including sorting, matrix multiplication, polynomial evaluation, and Fourier transforms
+are known for parallel systems using this network.
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -127,7 +127,7 @@ In graph theory, the shuffle-exchange network is an undirected cubic multigraph,
 represent binary sequences of a given length and whose edges represent two operations on these
 sequence, circular shifts and flipping the lowest-order bit.
 
-The shuffle-exhange network of order d consisted of an array of 2^d cells, numbered by the 2^d
+The shuffle-exchange network of order d consisted of an array of 2^d cells, numbered by the 2^d
 different binary numbers that can be represented with d bits.
 These cells werer connected by communications links in two different patterns: "exchange" links
 in which each cell is connected to the cell numbered with the opposite value in its lowest-order
@@ -144,9 +144,55 @@ communications links to use) for each communications step. Fast parallel algorit
 problems including sorting, matrix multiplication, polynomial evaluation, and Fourier transforms
 are known for parallel systems using this network.
 
+Single-Stage Networks
+--------------------------
 
+The simplest switching element that can be used is the 2x2 switching element (SE). 
+Possible settings:
+1. Straight
+2. Exchange
+3. Upper-broadcast
+4. Lower-broadcast
 
+In the straight setting, the upper input is transferred to the upper output and the lower input
+is transferred to the lower output and the lower input is transferred to the upper output.
 
+In the upper-broadcast setting the upper input is broadcast to both the upper and lower outputs.
+
+In the lower-broadcast the lower input is broadcast to both the upper and the lower outputs.
+
+To establish communication between a given input (source) to a given output (destination), data
+has to be circulated a number of times around the network.
+
+	Suffle-Exchange single-stage network
+	-------------------------------------
+	Two operations are used. These can be defined using an m bit-wise address pattern of the 
+	inputs pm-1pm-2...p1p0 as follows:
+		
+		S(pm-1pm-2...p1p0) = pm-2pm-3...p1p0pm-1
+						  _
+		E(pm-1pm-2...p1p0) = pm-1pm-2...p1p0
+	With shuffle (S) and exchange (E) operations, data is circulated from input to output 
+	until it reaches its destination.
+	If the number of inputs, for example, processors, in a single-stage IN is N and the number
+	of outputs, for example, memories, is N, the number of SEs in a stage is N/2. The maximum
+	length of a path from an input to an output in the network, measured by the number of SEs
+	along the path, is log2(N).
+
+	Example: In an 8-input single stage Suffle-Exchange if the source is 0(000) and the 
+	destination is 6(110), then the following is the required sequence of Shuffle/Exchange
+	operations and circulation of data:
+	
+	E(000) --> 1(001) --> S(001) --> 2(010) --> E(010) --> 3(011) --> S(011) --> 6(110)
+
+	The network complexity of the single-stage interconnection network is O(N) and the time
+	complexity is O(N).
+
+In addition to the shuffle and the exchange functions, there exist a number of other interconnection
+patterns that are used in forming the interconnections among stages in interconnection networks.
+
+	The Cube Network - Singl-stage network
+	----------------------------------------
 
 
 

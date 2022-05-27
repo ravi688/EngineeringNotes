@@ -1,0 +1,212 @@
+
+FLYNN'S TAXONOMY OF COMPUTER ARCHITECTURE
+-------------------------------------------
+
+Computer architecture can be classified into the following four distinct categories:
+
+1. single-instruction single-data streams (SISD);
+2. single-instruction multiple-data streams (SIMD);
+3. multiple-instruction single-data streams (MISD); and
+4. multiple-instruction multiple-data streams (MIMD);
+
+NOTE: Parallel computers are either SIMD or MIMD.
+
+[SIMD]:
+When there is only one control unit and all processors execute the same instruction in a
+syncronized fashion, the parallel machine is classised as SIMD.
+
+[MIMD]:
+Each processor has its own control unit and can execute different instruction son different
+data.
+
+NOTE: In practice there is no viable MISD machine.
+
+Kuck's classification (extension to the Flynn's taxonomy)
+--------------------------------------------------------
+Kuck extended the instruction stream further to single and multiple streams.
+The data stream in Kuck's classification is called the execution stream.
+
+SIMD Architecture:
+-------------------------
+The SIMD model of parallel computing consists of two parts: a front-end computer and a processor
+array.
+The processor array is a set of identical synchronized processing elements capable of 
+simultaneously performing the same operation on different data.
+Each processor has a small amount of local memory where the distributed data resides while
+it is being processed in parallel.
+The processor array is connected to the memory bus of the front end so that the front end can
+randomly access the local processor memories as if it were another memory.
+Thus, the front end can issue special commads that cause parts of the memory to be operated on 
+simultaneously executed on the front end using a traditional serial programming language.
+The application program is executed by the front end in the usual serial way, but issues
+commands to the processor array to carry outt SIMD operatrions in parallel.
+The similarity between serial and data parallel programming is one of the strong points of 
+data parallelism. Synchronozation is made irrelevant by the lock-step synchronization of the
+processors.
+Processors either do nothing or exactly the same operations at the same time.
+In SIMD archicture, parallelism is exploited by applying simultaneous operations across large
+sets of data.
+This paradigm is most useful for solving problems that have a lots of data that need to be
+updated on a wholesale basis. It is especially powerful in many regular numerical calculations.
+
+MIMD Architecture
+------------------
+MIMD parallel architectures are made of multiple processors and multiple memory modules connected
+together via some interconnection network.
+They fall into two broad categories: shared memory or message passing.
+
+1. Shared Memory System
+----------------------
+A shared memory system typically accomplishes interpocessor coordination through a global memory
+shared by all processors. These are typically server systems that communicate through a bug
+and cache memory controller.
+
+2. Message Passing System
+-------------------------
+A message passing system (also referred to as distributed memory) typically combines the local
+memory and processor at each node of the interconnection network.
+There is no global memory, so it is necessary to move data from one local memory to another by
+means of message passing.
+This is typically done by a Send/Receive pair of commands, which must be written into the
+application software by a programmer.
+These systems eventually gave way to Internet connected systems whereby the processor/memory
+nodes were either Internet servers or clients on individual's desktop.
+
+It was also apparent that distributed memory is the only way efficiently to increase the number
+of processors managed by a parallel and distributed system.
+If scalability to larger and larger systems (as measured by the number of processors) was to 
+continnue, systems had to use distributed memory techniques.
+These two forces created a conflict: programming in the shared memory model was easier, and
+designing systems in the message passing model provided scalability.
+The distributed-shared memory (DSM) architecture begain to appear in systems like the 
+SGI Origin2000, and others. In such systems, memory is physically distributed; for example, the
+hardware architecture follows the mesage passing school of design, but the programming model
+follows the shared memory school of thought. In effect, software covers up the hardware. 
+As far as programmer is concerned, the architecture looks and behaves like a shared memory
+machine, but a message passing architecture lives underneath the software.
+Thus, the DSM machine is a hybrid that takes advantage of both design schools.
+
+
+Shared Memory Organization
+----------------------------
+A shared memory model is one in which processors communicate by reading and writing locations in 
+a shared memory that is equally accessible by all processors. 
+Each processor may have registers, buffers, caches, and local memory banks as additional memory
+resources.
+A number of basic issues in the design of shared memory systems have to be taked into consideration.
+These include access control, synchronization, protection, and secuirty.
+The simplest shared memory system consists of one memory module that can be accessed from two 
+processors. Requests arrive at the memory module through its two ports. An arbitration unit within
+the memory module passes requests through to a memory controller. If the memory module is not
+busy and a single request arrives, then the arbitration unit passes that request to the memory
+controller and the request is granted. The module is placed in the busy state while a request is 
+being serviced. If a new request arrives while the memory is busy servicing a previous request, 
+the requesting processor may hold its request on the line until the memory becomes free or it 
+may hold its request on the line until the memory becomes free or it may repeat its request
+sometimes later.
+
+Depending on the interconnection network, a shared memory system leads to systems can be classified
+as:
+1. Uniform Memory Access (UMA)
+2. Non Uniform Memory Access (NUMA)
+3. Cache-only Memory Architecture (COMA)
+
+In the UMA system, a shared memory is accessible by all processors through an interconnection 
+network in the same way a single processor accesses its memory. Therefore all processors have
+equal access time to any memory location.
+The interconnection network used in the UMA can be a single bus, multiple buses, a crossbar, or a
+multiport memory.
+
+In the NUMA system, each processor has part of the shared memory attached. The memory has a single
+address space. Therefore, any processor could access any memory location directly using its
+real address. However, the access time to modules depends on the distance to the processor. This
+results in a nonuniform memory access time.
+
+Similar to the NUMA, each processor has part of the shared memory in the COMA, However, in this case
+the shared memory consists of cached memory. A COMA system requires that data be migrated to the
+processor requesting it
+
+Message Passing Organization
+----------------------------
+Message passing systems are a class of multiprocessors in which each processor has access to its
+own local memory. Unlike shared memory systems, communications in message passing systems are
+performed via send and receive operations. A node in such a system consists of a processor and 
+its local memory. Nodes are typically able to store message in buffers (temporary memory locations
+where messages wait until they can be sent or received), and perform send/receive operations at
+the same time as processing. Simultaneous message processing and problem calculating are handled
+by the underlying operation system. Procesors do not share a global memory and each processor has
+access to its own address space. The processing untis of a message passing system may be connected
+in a variety of ways ranging from architecture-specific interconnection structures to 
+geographically dispersted networks. The message passing approach is, in princple, scalable to
+large proportions. By scalable, it is meant that the number of processors can be increased without
+significant decrease in efficiency of operation.
+
+Two important design factors must be considered in designing interconnection networks for message
+passing systems. These are the link bandwidth and the network latency.
+The link bandwidth is defined as the number of bits that can be transmitted per unit time (bits/s).
+The network latency is defined as the time to complete a message transfer.
+
+INTERCONNECTION NETWORKS
+------------------------------
+Multiprocessors interconnection networks can be clasified based on a number of criteria.
+These include
+1. mode of operation (synchronous versus asynchronous)
+2. control strategy (centralized versus decentralized)
+3. switching techniques (circuit versus packet)
+4. topology (static versus dynamic)
+
+Mode of operation
+------------------
+In synchronous mode of operation, a single global clock is used by all components in the system
+such that the whole system is operating in a lock - step manner. 
+Asynchronous mode of operation, on the other hand, does not requre a global clock.
+Handshaking signals are used instead in order to coordinate the operation in asynchronous systems.
+While synchronous systems tend to be slower compared to asynchronous systems, they are race and
+hazard-free.
+
+Control Strategy
+------------------
+In centralized control systems, a single central control unit is used to oversee and control the
+operation of the components of the systems.
+In decentralized control, the control function is distributed among different components in the
+system. The function and reliability of the central control unit can become the bottleneck in a
+centralized control system.
+While the crossbar is a centralized system, the multistage interconnection networks are 
+decentralized.
+
+Switching Techniques
+--------------------
+Interconnection networks can be classificed according to the switching mechanism as circuit
+versus switching networks. In the circuit switching mechanism, a complete path has to be 
+established prior to the start of communication between a source and a destination. The established
+path will remain in existence during the whoel communication period. In a packet switching
+mechanism, communication between a source and destination takes place via messages that are divided
+into smaller entities, called packets. On their way to the destination, packets can be sent
+from a node to another in a store-and-forward manner until they reach their destination.
+While packet switching tends to use the network resources more efficiently compared to circuit
+switching, it suffers from variable packet delays.
+
+Exercise Problems
+-----------------
+1. What is the difference between cluster computing and grid computing?
+
+Cluster Computing
+1. A set of computers or devices that work together so that they can be viewed as a single system
+2. Nodes have the same hardware and same operating system.
+3. Each node performs the same task controlled and scheduled by software.
+4. A homogenous network.
+5. Located in a single location.
+6. Devices are connected through a fast local area network.
+7. Resources are managed by centralized resource manager.
+8. Used to solve issues in databases or WebLogic Application Servers.
+
+Grid Computing
+1. Use of widely distributed computing resources to reach a common goal.
+2. Nodes have different hardware and various operating systems.
+3. Each node performs different tasks.
+4. A heterogenous network.
+5. Devices are located in different locations.
+6. Devices are connected through a low-speed network or internet
+7. Each node has its own resource manager that behaves similarly to an idependent entity.
+8. Used to solve predictive modelling, simulations, Engineering Design, Automation etc.
+

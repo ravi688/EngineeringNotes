@@ -1,0 +1,204 @@
+
+MULTIPROCESSORS INTERCONNECTION NETWORKS
+---------------------------------------------
+
+Two schemes are introduced, namely static and dynamic interconnection networks.
+Static networks form all connections when the system is designed rather than
+when the connection is needed. In a static network, messages must be routed
+along established links. Dynamic interconnection networks establish connections
+between two or more nodes on othe fly as messages are routed along the links.
+
+Interconnection Networks Taxonomy
+----------------------------------
+Static networks can be further classified according to their interconnection 
+pattern as one-dimension (1D), two-dimension (2D), or hypercube (HC).
+
+Dynamic networks can be classified based on interconnection scheme as bus-based
+versus switch-based. Bus-based networks can further be classified as single bus
+or multiple buses.
+Switch based dynamic networks can be classified according to the structure of
+the interconnection network as single-stage (SS), multistage (MS), or crossbar
+networks.
+
+BUS-BASED DYNAMIC INTERCONNECTION NETWORKS
+---------------------------------------------
+
+Single Bus Systems
+-------------------
+Such a system consists of N processors, each having its own cache, connected by
+a shared bus. The use of local caches reduces the processor - memory traffic.
+All processors communicate with a single shared memroy.
+The typical size of such a system varies between 2 and 50 processors.
+The actual size is determined by the traffic per processor and the bus 
+bandwidth (defined as the maximum rate at which the bus can propagate data 
+once transmission has started).
+The single bus network complexity, measured in terms of the number of buses
+used, is O(1), while the time complexity, measured in terms of the amount
+of input to output delay is O(N).
+
+Although simple and easy to expand, single bus multiprocessors are inherently
+limied by the bandwidth of the bus and the fact that only one processor can
+access the bus, and in turn only one memory access can take place at any given
+time.
+
+Multiple Bus Systems
+----------------------
+
+A multiple bus multiprocessor system uses several parallel buses to interconnect multiple 
+processors and multiple memory modules.
+A number of multiple connection schemes are possible in this case. Among the possibilities are
+the multiple bus with full bus-memory connection (MBFBMC), multiple bus with single bus memory
+connection (MBSBMC), multiple bus with partial bus-memory connection (MBPBMC), and multiple bus
+with clas-based memory connection (MBCBMC).
+
+Multiple bus with full bus-memory connection has all memory modules connected to all buses.
+The multiple bus with single bus - memory connection has each memory module connected to a specific
+bus.
+The multiple bus with partial bus-memory connection has each memory modules connected to a subset
+of buses.
+A class is just an arbitrary collection of memory modules.
+
+In general, multiple bus multiprocessor organization offers a number of desirable features such 
+as high reliability and ease of incremental growth. A single bus failure will leave (B - 1) 
+distict fault-free paths between the processors and the memory modules.
+On the other hand, when the number of buses is less than the number of memory modules (or the 
+number of processors), bus contention is expected to increase.
+
+Bus Synchronization
+-----------------------
+
+A bus can be classified as synchronous or asynchronous. 
+
+The time for any transaction over a synchronous bus is known in advance.
+In accepting and/or generating information over the bus, devices take the transaction time into
+account. Asynchronous bus, on the other hand, depends on the availability of data and the
+readiness of devices to initiate bus transactions.
+
+In a single bus multiprocessor system, bus arbitration is required in order to resolve the bus
+contention that takes place when more than one procesor competes to access the bus. 
+In this case, processors that want to use the bus submit their requrests to bus arbitration logic.
+The latter decides, using a certain priority scheme, which processor will be granted access to 
+the bus during a certain time interval (bus master). The process of passing bus mastership from
+one processor to another is called handshaking and requres the use of two control signals: bus
+request and bus grant. The first indicates that given processor is requesting master-ship of the bus,
+while the second indicates that bus mastership is granted. A third signal, called bus busy,
+is usually used to indicate whether or not the bus is currently being used.
+
+Among the priority schemes used are random, simple rotating priority, equal priority, and least
+recently used (LRU) priority. After each arbitration cycle, in simple rotating priority, all
+priority levels are reduced one place, with the lowest priority processor taking the highest
+priority.
+In the LRU algorithm, the highest priority is given to the processor that has not used the bus
+for the longest time.
+
+
+SWITCH-BASED INTERCONNECTION NETWORKS
+-----------------------------------------
+
+In this type of network, connections among processors and memory modules are made using simple
+switches. Three basic interconnection topologies exist: crossbar, single-stage, and multistage.
+
+Crossbar Networks
+-----------------
+A crossbar network represents the other extreme to the limited single bus network.
+While the single bus can provide only a single connection, the crossbar can provide simultaneous
+connections among all its inputs and all its outputs.
+The crossbar contains a switching element (SE) at the intersection of any two lines extended
+horizontally or vertically inside the switch.
+
+
+In general for an N x N crossbar, the network complexity, measured in terms of the number of
+switching points, is O(N ^ 2) while the time complexity, measured in terms of the input to
+outpout delay, is O(1). It should be noted that the complexity of the crossbar network
+pays off in the form of reduction in the time complexity. Notice also that the corssbar
+is a nonblocking net-work that allows a multiple input-output connection pattern (permutation)
+to be achieved simultaneously. However, for a large multiprocessor system the complexity of 
+the crossbar can become a dominant financial factor.
+
+
+EXTERNAL NOTES:
+---------------
+Integer lattice: In mathematics, the n-dimensional integer lattic (or cubic lattice),
+denoted Z^n, is the lattice in the Euclidean space R^n whose lattice points are n-tuples of
+integers. The two-dimensional integer lattice is also called the square lattice, or grid lattice.
+Z^n is the simplest example of a root lattice. The integer lattice is an odd unimodular lattice.
+
+In graph theory, the shuffle-exchange network is an undirected cubic multigraph, whose vertices
+represent binary sequences of a given length and whose edges represent two operations on these
+sequence, circular shifts and flipping the lowest-order bit.
+
+The shuffle-exchange network of order d consisted of an array of 2^d cells, numbered by the 2^d
+different binary numbers that can be represented with d bits.
+These cells werer connected by communications links in two different patterns: "exchange" links
+in which each cell is connected to the cell numbered with the opposite value in its lowest-order
+bit, and "shuffle" links in which each cell is connected to the cell whose number is obtained
+by a circular shift that shifts every bit to the next more significant position, except for the 
+highest-order bit which shifts into the lowest-order position. The "exchange" links are 
+bidirectional, while the "shuffle" links can only transfer information in one direction, from
+a cell to its circular shift.
+
+The advantage of this communications pattern, over earlier methods, is that it allows information
+to be rapidly transferred through a small number of steps from any vertex in the network to any
+other vertex, while only requiring a single bit of control information (which of the two
+communications links to use) for each communications step. Fast parallel algorithms for basic
+problems including sorting, matrix multiplication, polynomial evaluation, and Fourier transforms
+are known for parallel systems using this network.
+
+Single-Stage Networks
+--------------------------
+
+The simplest switching element that can be used is the 2x2 switching element (SE). 
+Possible settings:
+1. Straight
+2. Exchange
+3. Upper-broadcast
+4. Lower-broadcast
+
+In the straight setting, the upper input is transferred to the upper output and the lower input
+is transferred to the lower output and the lower input is transferred to the upper output.
+
+In the upper-broadcast setting the upper input is broadcast to both the upper and lower outputs.
+
+In the lower-broadcast the lower input is broadcast to both the upper and the lower outputs.
+
+To establish communication between a given input (source) to a given output (destination), data
+has to be circulated a number of times around the network.
+
+	Suffle-Exchange single-stage network
+	-------------------------------------
+	Two operations are used. These can be defined using an m bit-wise address pattern of the 
+	inputs pm-1pm-2...p1p0 as follows:
+		
+		S(pm-1pm-2...p1p0) = pm-2pm-3...p1p0pm-1
+						  _
+		E(pm-1pm-2...p1p0) = pm-1pm-2...p1p0
+	With shuffle (S) and exchange (E) operations, data is circulated from input to output 
+	until it reaches its destination.
+	If the number of inputs, for example, processors, in a single-stage IN is N and the number
+	of outputs, for example, memories, is N, the number of SEs in a stage is N/2. The maximum
+	length of a path from an input to an output in the network, measured by the number of SEs
+	along the path, is log2(N).
+
+	Example: In an 8-input single stage Suffle-Exchange if the source is 0(000) and the 
+	destination is 6(110), then the following is the required sequence of Shuffle/Exchange
+	operations and circulation of data:
+	
+	E(000) --> 1(001) --> S(001) --> 2(010) --> E(010) --> 3(011) --> S(011) --> 6(110)
+
+	The network complexity of the single-stage interconnection network is O(N) and the time
+	complexity is O(N).
+
+In addition to the shuffle and the exchange functions, there exist a number of other interconnection
+patterns that are used in forming the interconnections among stages in interconnection networks.
+
+	The Cube Network - Singl-stage network
+	----------------------------------------
+
+
+
+
+
+
+
+
+

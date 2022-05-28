@@ -193,6 +193,53 @@ patterns that are used in forming the interconnections among stages in interconn
 
 	The Cube Network - Singl-stage network
 	----------------------------------------
+	
+	The interconnection pattern used in the cube network is defined as follows:
+						   	  _
+	Ci(pm-1pm-2...pi+1pipi-1...p1p0) = pm-1pm-2...pi+1pipi-1...p1p0
+
+	Consider a 3-bit address (N = 8), then we have C2(6) = 2, C1(7) = 5, and C0(4) = 5,
+	The network is called the cube network due to the fact that it resembles the 
+	interconnection among the corners of an n-dimensional cube (n = log2(N)).
+
+
+	The Plus-Minus 2^i (PM2I) Network
+	--------------------------------------
+
+	The PM2I network consists of 2K inter-connection functions defined as follows:
+		PM2+i(P) = P + 2^i mod N (0 <= i < k)
+		PM2-i(P) = P - 2^2 mod N (0 <= i < k)
+
+	
+	The Butterfly Function
+	--------------------------------------
+
+	The interconnection pattern used in the butterfly network is defined as follows:
+		
+		B(pm-1pm-2...p1p0) = p0pm-2...p1pm-2
+
+	Consider a 3-bit address (N = 8), the follwing is the butterfly mapping:
+
+	B(000) = 000
+	B(001) = 100
+	B(010) = 010
+	B(011) = 110
+	B(100) = 001
+	B(101) = 101
+	B(110) = 011
+	B(111) = 111
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

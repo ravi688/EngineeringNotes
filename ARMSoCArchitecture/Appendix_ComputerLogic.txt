@@ -1,0 +1,100 @@
+
+APPENDIX - COMPUTER LOGIC
+---------------------------
+
+
+NOTE 1: An AND gate can be extended to more than two inputs (though current CMOS technology limits the 
+practical fan-in to four inputs, reducing to three inputs on some sub-micron process technologies).
+
+NOTE 2: The sum function arises frequently in digital logic and is called the exclusive OR or
+XOR function.
+
+NOTE 3: An adder for N-bit binary number can be contructed from single-bit adders, but all bits
+except the first may have to accept a carry input from the next lower stage.
+Each bit of the adder produces a sum and a carry-out from the inputs and the carry-in.
+
+Clocks
+----------
+Almost all procesors are controlled by a free-running timing reference signal called a clock.
+NOTE: AMULET processor cores that operate without any external timing reference signal.
+The clock controls the state changes within the processor.
+
+Generally, all the state is held within registers. During the clock cycle combinational logic
+(logci whose outputs depend only on the current input values) works out the next state values using
+Boolean logic gates. At the end of the clock cycle the active clock edge causes all the registers
+to switch simultaneously to the next state. For maximum performance the clock frequency is set at 
+the highest rate at which all the combinatorial logic can be guaranteed to complete, under worst-case
+conditions, in time for the next active clock edge.
+
+Sequential Circuits
+----------------------------
+A register stores the state between active clock edges and changes its contents on the active edge.
+It is a sequential logic circuit; its outputs depend not only on the current input values, but
+also on how they have changed in the past.
+
+The simplest sequential circuit is the R-S (Reset-Set) flip-flop. This is a circuit whose output is
+set high whenever the Set input is active and is reset low whenever the Reset input is active.
+If both inputs are active at the same time the flip-flop behaviour depends on the implementation;
+if both are inactive the flip-flop remembers the last state it was put into.
+
+Transparent latches
+--------------------------
+A transparent ( or D-type ) latch has a data input (D) and an enable signal (En); the output follows
+the D input whenever En is high, but remains constant at whatever value applied just before En went
+low while En stays low.
+
+In principle it should be possible to build any sequential circuit using a D-type latch provided the
+combinatorial logic between stages is slow enough. Applying a very short positive pulse to En will
+let the next state data through the latch and then hold it before the combinatorial logic has time
+to respond to the new values. However, in practice this turns out to be very hard way to build
+a reliable circuit.
+
+Edge-triggered latches
+--------------------------
+There are various ways to build more reliable latching circuits, most of which require each signal
+to pass through two transparent latches per clock cycle. In the simplest of these, the second
+latch is placed in series with the first and operates with the inverse enable function. At all times,
+one latch or the other is holding and the other is transparent. On one clock edge, where the first
+latch goes opaque and the second goes transparent, the input data value propagates through to the
+output. It is then held through the full cycle until the same edge in the following cycle. 
+This is therefore an edge-triggered latch.
+
+Edge-triggered latches require very careful design, since they are not simply combinatorial logic
+circuits and their function depends critically on the dynamic properties of the circuit elements.
+If constructured, as suggested above, from two transparent latches in series, there are various
+race conditions which must be avoided. But, with good tools, reliable latches can be designed,
+and once a reliable latch is available, sequential circuits of arbitrary complexity can be 
+constructed.
+
+Registers
+---------------
+A set of edge-triggered (or equivalent) latches which jointly store the state of a binary value
+through a clock cycle is termed a register.
+A flexible form of register is connected to a free-running clock and has a 'clock enable' control 
+input so that control logic can decide on a cycle-by-cycle basis whether or not to update the
+register's contents. A simple way to build such a register is to add a gate on the common clock
+line to the edge-triggered latches. If we use negative-edge triggered latches, an AND gate will
+remove the entire high-going clock pulse provided the enable input is low before the clock goes high
+and stays low until the clock has gone low again. (These are the set-up and hold conditions for 
+the enable input.) If the enable is, itself, produced from a similar register running off the same
+clock, it will meet these constraints.
+
+Glossary:
+1. ASIC: Application specific integrated circuit; a VLSI device designed for a particular application,
+usually for a particular customer.
+
+2. BCD: Binary Coded Decima; a way to represent a number by encoding each decimal digit as its binary
+equivalent.
+
+3. CAM: Content Addressable Memory; this is memory which contains a number of different data items
+and is accessed by presenting a data value which is compared with all the stored items to see if
+there is a match. If there is a match, the address of the matched location is output; otherwise the
+CAM signals a 'miss'. It is also described as associative memory, and is an important component of an
+associative cache or TLB.
+
+4. CISC: a term created at the same time as RISC to describe earlier architectures that do not
+have the characteristics of RISCs. Typically a CISC has a variable instruction length mini-computer
+style instruction set with many addressing modes, memory-to-memory operations and support for many
+data types.
+
+

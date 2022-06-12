@@ -1,0 +1,38 @@
+
+
+Introduction to some key CmdLets
+----------------------------------
+
+
+Get-Help, Get-Process, and Get-Member
+
+
+1. Get-Help services
+2. Get-Help Get-Service
+3. Get-Help Get-Service -Detailed
+4. Get-Help Get-Service -Examples
+
+
+5. get-service | where-object { $_.Status -eq "Running" }
+6. get-service | where-object { $_.Status -eq "Stopped" }
+
+
+7. get-childitem
+8. get-childitem | where-object { $_.length -gt 1024 }
+9. get-childitem | where-object { $_.length -lt 1024 }
+
+
+10. get-service | select-object -property status, startType
+
+11. get-childitem | select-object -property length, name
+
+12. get-childitem *.jpg
+
+// Network adapter
+
+1. Get-NetIPAddress
+2. Get-NetIPConfiguration
+3. Get-NetIPInterface
+
+
+

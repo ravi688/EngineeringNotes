@@ -1,0 +1,96 @@
+
+
+ A little PowerShell History
+ ---------------------------
+
+
+
+PowerShell is a Microsoft framework that includes a command shell
+and a scripting language. PowerShell has traditionally been used
+by system administrators, IT teams, incident response groups,
+and forensic investigators to gain access to operational 
+information regarding the infrastructure they manage.
+
+
+How is PowerShell Used Today?
+---------------------------------
+
+PowerShell is most typically used to automate administrative tasks
+and examin the details of runningg desktops, servers, and mobile
+devices. It is used to examine both locan and remote systems using
+the Common Object Model (COM) and the Windows Management Interface
+(WMI). Today, it can be used to examine and maange remote Linux,
+Mac, and Network devices using the Common Information Model (CIM).
+
+
+NOTE: You can run PowerShell and PowerShell ISE with User
+privlege; however, to gain acces to many of the rich acquisition
+functions needed, runningi PowerShell as Administrator is requried. A world of caution as well. Running as Administrator or User
+and executing CmdLets can damage your system or delete important
+files! Proceed with caution!
+
+PowerShell ISE interface
+-------------------------
+
+1. Scripting Panel: This panel provides the ability to create
+PowerShell scripts that incorporate multiple commands using the 
+included PowerShell scripting language. Note that this is not
+where we typically start when developing PowerShell Scripts. 
+Rather, we experiment in the Direct Command Entry Panel first,
+then once we have perfected our approach, we can then create
+scripts.
+
+2. Direct Command Entry Panel: This panel is used to execute 
+PowerShell CmdLets. The commands entered here are much more powerful then the anscestor Windows Command Line or DOS commands.
+In addition, the format and structure of these commands is much
+different and follows some strict rules. I will be explaning the
+verb-noun format and structure and providing more details and
+some examples in the next section.
+
+3. Command Help Panel: This panel provides detailed help and 
+information regarding every CmdLet available to us. However, 
+I rarely use this area and instead request direct help using the 
+Get-Help CmdLet to get information regarding CmdLets of interest.
+
+What Is a CmdLet?
+--------------------------
+
+A CmdLet is typically a lightweight Windows PowerShell script that
+performs a specific function.
+
+A CmdLet then is a specific order from a user to the operating
+system, or to an application to perform a service, such as 
+"display all the currently running processes" or "show me all 
+the services that are currently stoppped."
+
+All CmdLets are expressed as a verb-noun pair and have a help file
+that can be accessed using the verb-noun pair Get-Help <CmdLet name>. So yes, even help is just another CmdLet. Updating help is 
+vital to keep help associated with curent all the currently
+installed CmdLets and to install help for new CmdLets that
+are created and updated every day.
+
+The help files will be updated for all installed modules. We will
+For now this will update all the standard PowerShell modules.
+Additional modules each as Active Directory, VMWare, SharePoint,
+and hundreds of others allow acquisition to numerous devices and
+services.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

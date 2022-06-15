@@ -4,3 +4,141 @@ AN INTRODUCTION TO PROCESSOR DESIGN
 
 
 Abstraction is fundamental to understanding complex computers.
+
+All modern general-purpose computers employ the principles of the stored-program digital computer.
+The store-program concept originated from the Princeton Institute of Advanced Studies in the 1940s
+and was first implemented in the 'Baby' machine which first ran in June 1948 at the University
+of Manchester in England.
+
+Fifty years of development have resulted in a spectacular increase in the performance of processors
+and an equally spectacular reduction in their cost. Over this period of relentless progress
+in the cost-effectiveness of computers, the principles of operation have changed remarkably little.
+Most of the improvements have resulted from advances in the technology of electronics, moving
+from valves (vaccum tubes) to individual transistors, to integrated circuits (ICs) incorporating
+several bipolar transistors and then through generations of IC technology leading to today's very
+large scale integrated (VLSI) circuits delivering millions of field-effect transistors on a single
+chip.
+
+1. Computer architecture describes the user's view of the computer. The instruction set, 
+   visible registers, memory management table structures and exception handling model are all
+   part of the architecture.
+2. Computer organization describes the user-invisible implementation of the architecture.
+   The pipeline structure, transparent cache, table-walking hardware and translation look-aside
+   buffer are all aspects of the organization.
+
+NOTE: Translation lookaside buffer (TLB):
+	A TLB is a memory cache that stores the recent translations of virtual memory to physical
+	memory. It is used to reduce the time taken to access a user memory location.
+	It can be called an address-translation cache. It is a part of the chip's memory-
+	management unit (MMU). A TLB may reside between the CPU and the CPU cache, between
+	CPU cache and the main memory or between the different levels of the multi-level cache.
+	The majority of desktop, laptop, and server processors include one or more TLBs in the 
+	memory-management hardware, and it is nearly always present in any processor that utilizes
+	pages or segmented virtual memory.
+
+
+Amongst the advances in these aspects of the design of computers, the introduction of virtual
+memory in the early 1960s, of transparent cache memories, of pipelining and so on, have all been
+milestones in the evolution of computers. The RISC idea ranks amongst these advances, offering
+a signficant shift in the balance of forces which determines the cost-effectiveness of 
+computer technology.
+
+
+What is a processor?
+-----------------------
+
+A general-purpose processor is a finite-state automaton that executes instructions held in a memory.
+The state of the system is defined by the values held in the memory locations together with the 
+values in certain registers within the processor itself.
+Each instruction defines a particular way the total state should change and it also defines
+which instruction should be executed next.
+
+The Stored-program computer
+---------------------------
+
+The stored-program digital computer keeps its instructions and data in the same memory system, 
+allowing the instructions to be treated as data when necessary. This enables the processor
+itself to generate instructions which it can subsequently execute. Although programs that do
+this at a fine granularity (self-modifying code) are generally considered bad form these days
+since they are very difficult to debug, use at a coarser granularity is fundamental to the way
+mostt computers operate. Whenever a computer laods in a new program from disk (overwriting an old
+program) and then executes it the computer is employing this ability to change its own program.
+
+Computer Applications
+-----------------------
+
+Because of its programmability a stored-program digital computer is universal, which means that
+it can undertake any task that can be described by a suitable algorithm. Sometimes this is 
+reflected by its configuration as a desktop machine where the user runs different programs at
+different times, but sometimes it is reflected by the same processor being used ina range of 
+different applications, each with a fixed program. Such applications are characteristically embedded
+into products such as mobile telephones, automotive engine-management systems, and so on.
+
+Transistors
+--------------------
+It is a curious structure composed from carefully chosen chemical substances with complex 
+electrical properties that can only be understood by reference to the theory of quantum
+mechanics, where strange subatomic particles sometimes behave like waves and can only be 
+described in terms of probabilities. Yet the gross behaviour of a transistor can be described, 
+without reference to quantum mechanics, as a sett of equations that relate the voltages on its
+terminals to the current that flows through it.
+These equals abstract the essential behaviour of the device from its underlying physics.
+
+Logic gates
+-----------------
+When a group of transistors is wired together in a particular structure, such as the CMOS
+(Complementary Metal Oxide Semiconductor) NAND gate, t he behaviour of the group has a particularly
+simple description.
+
+The gate abstraction
+-----------------------
+The point about the gate abstraction is that not only does it greatly simplify the process of 
+designingi circuits with great numbers of transistors, but it actually removes the need to know
+that the gate is built from transistors. A logical circuit should have the same logical behaviour
+whether the gates are implemented using field-effect transistors ( the transistors that are
+available on a CMOS process), bipolar transistors, electrical relays, fluid logic or any other
+form of logic.  The implementation tehcnology will effect the performance of the circuit, but
+it should have no effect on its function. It is the duty of the transistor-level circuit designer
+to support the gate abstraction as near perfectly as is possible in order to isolate the logic
+circuit designer from the need to understand the transistor equations.
+
+Levels of abstraction
+-----------------------
+1. transistors
+2. logic gates, memory cells, special circuits
+3. singl-bit adders, multiplexers, decoders, flip-flops
+4. word-wide adders, multiplexers, decoders, registers, buses
+5. ALUs, barrel shifters, register banks, memory blocks
+6. processor, cache and memory management organizations
+7. processors, peripheral cells, cache memories, memory management units
+8. integrated system chips
+9. printed circuit boards
+10. mobile telephones, PCs, engine controllers
+
+Gate-level design
+--------------------
+
+The next step up from the logic gate is to assemble a library of useful functions each composed
+of several gates. Typical functions are, as listed above, adders, multiplexers, decoders and
+flip-flops, each 1-bit wide.
+
+Appendix:
+1. Boolean algebra and notation
+2. Binary numbers
+3. Binary addition
+4. Multiplexers
+5. Clocks
+6. Sequential circuits
+7. Latches and flip-flops
+8. Registers
+
+Note that although the appendix describes these circuit functions in terms of simple logic gates, 
+there are often more efficient CMOS implementations based on alternative transistor circuits.
+There are many ways to satisfy the basic requirements of logic design using the complementary
+transistors available on a CMOS chip, and new transistor circuits are published regularly.
+
+
+
+
+
+

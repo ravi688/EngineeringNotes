@@ -1,0 +1,24 @@
+
+ Golden Rule 9: Do not force unnecessary synchronisation
+ ------------------------------------------------------
+
+
+ The night rule is to avoid unnecessary synchronisation. Graphics applications achieve the best
+ performance when the CPU and graphics core tasks run in parallel. Graphics cores also operate 
+ most efficiently when the vertex-processing tasks of one frame are processed in parallel to the
+ fragment-colouring tasks of previous frames. When an application issues a command that causes the
+ CPU to interrupt the graphics core, it can significantly reduce performance.
+
+  1. In OpenGL ES - synchronisation functions such as glReadPixels, glFinish, eglClientWaitSync and
+     glWaitSync
+  2. In Vulkan - there is much finer control over synchronisation between resources, as any 
+     synchronisation between the graphics processor and CPU is defined by the developer.
+
+ One of the most common causes of poor application performance is when the application accesses
+ the content of a framebuffer from the CPU. When such an operation is issued, the calling
+ application's CPU thread must stall until the graphics core has finished rendering into the frame
+ buffer attachment. Once the render is complete, the CPU can begin reading data from the attachment.
+ During this time, the graphics core will not have write access to that attachment, which can cause
+ the graphics core to stall subsequent renders to that framebuffer. Due to the severe cost, there
+ operations should only be used when absolutely necessary - for example to capture a screenshot
+ of a game when a player requests one.

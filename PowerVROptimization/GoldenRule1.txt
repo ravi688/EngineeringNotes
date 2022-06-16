@@ -1,0 +1,21 @@
+
+
+ Golden Rule 1: Do Understand the Target Device
+ -----------------------------------------------
+
+ The first rule is about understanding the device you are developing for.
+
+ In the past we have known two devices with similar graphics cores, similar CPUs, and even similar
+ memory specifications, but very different performance. This means you cannot really make any
+ assumptions about your target device. Real tests need to be performed on them in order to gain a 
+ feeling of how they behave and what parts of the SoC are more likely to cause performance 
+ bottlenecks. Testing can help evaluate the relative strengths and weaknesses of a device.
+
+ As we've mentioned before, do not assume the graphics core is the problem. Other parts of the
+ system including the graphics driver and CPU can cause issues.
+
+ One of the most important factors in determining performance is the amount of memory bandwidth.
+ This isn't readily available information and therefore requires testing in order to be 
+ determined accurately.
+
+

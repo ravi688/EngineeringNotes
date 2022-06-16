@@ -1,0 +1,20 @@
+
+ Golden Rule 6: Do use texture compression
+ -----------------------------------------
+
+ The sixth rule is to use texture compression. In some instances, it is worth considering the 
+ balance between texture size and texture compression. It may be possible to use a larger texture
+ and a low-bitrate compression scheme and achieve a better balance of bandwidth savings and 
+ acceptable image quality.
+
+ Texture compression, not to be confused with image file compression, minises the runtime memory
+ footprint of textures. This provides several performance benefits, but primarily reduces the 
+ amount of system memory bandwidth consumed sending data to the graphics core.
+
+ PVRTC and PVRTCII are PowerVR specific compression technologies and will achieve best peformance
+ on the hardware, consumiong as little as 2 bits per pixel. These textures are also very texture
+ cache efficient as the lower pixel size allows more pixels to fit in the limited amount of cache
+ memory available to the texture units.
+
+ Depending on the PowerVR generation and graphics API targeted, additional compressed texture
+ formats may be supported, such as ASTC.

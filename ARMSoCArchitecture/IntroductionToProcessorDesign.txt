@@ -1,0 +1,93 @@
+
+
+ AN INTRODUCTION TO PROCESSOR DESIGN
+ ----------------------------------
+
+
+ Abstraction is fundamental to understanding complex computers. 
+ 
+ The ideas beind the Reducted Instruction Set Computer (RISC) originated in processor research 
+ programmes at Stanford and Berkeley universities around 1980, though some of the central ideas
+ can be traced back to earlier machines.
+
+ With the rapid development of markets for portable computer-based products, the power consumption
+ of digital circuits is of increasing importance.
+
+ - Computer Architecture describes the user's view of the computer. The instruction set, visible
+   registers, memory management table structures and exception handling model are all part of the
+   architecture.
+
+ - Computer organization describes the user-invisible implementation of the architecture. 
+   The pipeline structure, transparent cache, table-walking hardware and translation look-aside
+   buffer are all aspects of the organization.
+ 
+ 	Amongst the advances in theses aspects of the design of computers, the introduction of
+	virtual memory in the early 1960s, of transparent cache memories, of pipelining and so on,
+	have all been milestones in the evolution of computers.
+
+ - A general-purpose processor is a finite-state automaton that executes instructions held in 
+   a memory. The state of the system is defined by the values held in the memory locations together
+   with the values held in certain registers within the processor itself.
+   Each instruction defines a particular way the total state should change and it also defines which
+   instruction should be executed next.
+
+ - The stored-program digital computer keeps its instructions and data in the same memory system, 
+   allowing the instructions to be treated as data when necessary. 
+   This enables the processor itself to generate instructions which it can subsequently execute.
+   Although programs that do this at a fine granularityi (self-modifying code) are generally 
+   considered bad form these days since they are very difficult to debug, use at a coarser
+   granularity is fundamental to the way most computers operate.
+
+   	Whenever a computer loads in new program from disk (overwriting an old program) and then
+	executes it the computer is employing this ability to change its own program.
+
+ - Because of its programmability a stored-program digital computer is universal, which means
+   that it can undertake any task that can be described by a suitable algorithm. 
+   	
+	Sometimes this is reflected by its configuration as a desktop machine where the user
+	runs different programs at different times, but sometimes it is reflected by the same
+	processor being used in a range of different applications, each with a fixed program.
+	Such applications are characteristically embedded into products such as mobile telephones,
+	automotive engine-management systems, and so on.
+
+NOTE: CMOS --> Complementary Metal Oxide Semiconductor
+
+ - The point about the gate abstraction is that not only does it greatly simplify the process of 
+   designing circuits with great numbers of transistors, but it actually removes the need to 
+   know that the gate is built from transistors. A logic circuit should have the same logical 
+   behaviour whether the gates are implemented using field-effect transistors (the transistors
+   that are available on a CMOS process), bipolar transistors, electrical relays, fluid logic or
+   any other form of logic. The implementation technology will effect the performance of the circuit,
+   but it should have no effect on its function.
+  
+  	It is the duty of transistor-level circuit designer to support the gate abstraction as near
+	perfectly as is possible in order to isolate the logic circuit designer from the need to
+	understand the transistor equations.
+
+ - A typical hierarchy of abstraction at the hardware level might be: 
+ 	1. transistors;
+	2. logic gates, memory cells, special circuits;
+	3. single-bit adders, multiplexers, decoders, flip-flops;
+	4. word-wide adderes, multiplexers, decoders, registers, buses;
+	5. ALUs, barrel shifters, register banks, memory blocks;
+	6. processor, cache and memory management organizations;
+	7. processors, peripherals cells, cache memories, memory management units;
+	8. integrated system chips;
+	9. printed circuit boards;
+	10. mobile telephones, PCs, engine controllers.
+
+ - The next step up from the logic gate is to assembl a library of useful functions each composed
+   of several gates.
+
+
+
+
+
+
+
+
+
+
+
+
+

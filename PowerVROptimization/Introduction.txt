@@ -1,0 +1,19 @@
+
+ Golden Rules of Graphics Development > Introduction
+ --------------------------------------------------
+
+ Welcome to the Golden Rules of Development training presentation.
+
+ This training will be focused on the Golden Rules of graphics development. These are various rules
+ of thumb and bits of wisdom which you can use when developing graphics applications for 
+ Imagination GPU devices. They're derived from the combined experience of Developer Technology team
+ here at Imagination.
+
+ Some of these recommendations are specific to Imagination GPUs, but, in general, most are simply
+ good practice for any mobile graphics developer.
+
+ The next set of slides will cover the 10 key rules adopted by the Graphics Developer Technology
+ team, which closely relate to some common performance bottlenecks.
+
+ These bottlenecks may seem obvious, but when working with developers, we've found the same mistakes
+ being made fairly often.

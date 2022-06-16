@@ -1,0 +1,19 @@
+
+
+ Golden Rule3 : Do not use alpha blend unnecessarily
+ ------------------------------------------------------
+
+ The third rule is to disable alpha blending wherever possible. If transparent objects are required,
+ keep the number of transparent objects to a minimum. The reasoning behind this is that deferred
+ renderers, such as PowerVR graphics cores, calculate the visibility of fragments before the 
+ corresponding fragment shader is invoked to process it. This prevents invisible fragmments in 
+ output image being processed unnecessarily.
+
+ If alph blending is enabled, then the hardware used to determine a fragment's visibility cannot be
+ used. This is because the occluded (alpha-blended) fragment may impact the final rendererd image.
+ Due to this behaviour, enabling alpha blending eliminates the benefits of deferred rendering
+ graphics architectures. This means the hardware is no longer able to make decisions about a 
+ fragment's visibility and drop it from the pipeline. This will likely result in overdraw which is
+ where fragments are being processed that are not actually visible in the final image. Overdraw
+ can negatively impact the application's performance, particularly if the application is already
+ limited by rendering.

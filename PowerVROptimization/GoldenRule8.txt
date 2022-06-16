@@ -1,0 +1,26 @@
+
+ Golden Rule 8: Do not use Discard
+ -----------------------------------
+
+ The eight rule is to avoid the use of discard. Applications should not use the discard operation 
+ in the fragment shader as using it will not improve performance. Most mobile graphics cores use
+ a form of tile based deferred rendering (TBDR) and using discard negates some of the benefits of
+ this type of architecture. If possible, an application should prefer alpha blending over discarding.
+
+ Applications should also avoid alpha testing. When an alpha-testing primitive is submitted, early
+ depth testing, such PowerVR's Hidden Surface Removal (HSR), can discard fragments that are occluded
+ by other fragments closer to the camera. Unlike opaque primitives which would also perform depth
+ writes at this pipeline stage, alpha-tested primitives cannot write data to the depth buffer until
+ the fragment shader has executed and fragment visibility is known. These deferred depth writes can
+ impact performance, as subsequent primitives cannot be processed until the depth buffers are updated
+ with alpha tested primitive's values.
+
+ For optimal performance, consider alph blending instead of alpha test to avoid costly deferred
+ depth write operations. To ensure HSR removes as much overdraw as possile, submit draws in the 
+ following order:
+
+ 1. Opaque
+ 2. Alpha-tested
+ 3. Blended
+
+

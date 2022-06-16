@@ -1,0 +1,36 @@
+
+ Golden Rule 10: Do move calculations "Up the chain"
+ ----------------------------------------------------
+
+
+ The final rule is to move calculations up t he chain. In general, operations become cheaper and more
+ efficient as you push the calculations further up the graphics pipeline. An operation performed
+ during the fragment shader is usually the most costly while performing on the CPU is usually less
+ costly.
+
+ A good example of this would be writing a driving game. When creating the lighting on console or
+ desktop, you can probably get away with performing per-fragment lighing on the entire scene.
+
+ However, on mobile devices you have fewer resources available so you have to be more efficient, 
+ but you still want to maintain the visual quality of the console version.
+
+ You make a couple of adjustments to improve efficiency:
+
+ 1. You could decide to perform per-fragment lighting only the car instead of the full scene.
+    The car is in the centre of the scene, so it's worth using more resources to make it look better.
+ 2. For the rest of the scene you can achieve decent visual quality using only vertex lighting. 
+    There are fewer vertices per scene than fragments so this has reduced performance cost.
+ 3. Finally, if you are still lakcing in performance, you can try to move these lighting calculation
+    further up the pipeline by using something like pre-baked light maps.
+
+ It is also possible to consider moving calculations off the graphics core altogether. Although
+ the graphics core may be able to perform operations far more rapidly than the CPU can, it would
+ be even faster for the CPU to perform an operation just once instead of the allowing the operation
+ to be performed for many vertices on the graphics core.
+
+ To take the concept even further, consider performing calculations offline by baking values into
+ the scene, effectively replacing expensive run-time calculations with a simple lookup. For example,
+ replacing real-time lighting with light maps for static objects in a scene, such as terrain,
+ buildings, and trees can be a particularly effective compromise. This substantially improves
+ performance, and in many cases provides higher quality lighting than would be possible to calculate
+ at run-time.

@@ -1,0 +1,35 @@
+
+ Golden Rule 5: Do not updatet data buffers mid-frame
+ ------------------------------------------------------
+
+
+ The fifth rule is to avoid updating data buffers in-flight. Modifying in-flight resources currently
+ in use by the GPU such as vertex buffers and textures has a significant cost. Graphics processors
+ tend to have at least one frame of latency to ensure that the hardware is always well-occupied with
+ work. Therefore, altering a resource requried by an outstanding render will usually result in one
+ of the following actions being taken.
+
+ 1. Stall in the buffer modifying API call until the outstanding render completes.
+ 2. A new temporary buffer allocated for the new data, so t he buffer modifying API call can 
+    complete without stalling the CPU thread.
+
+ As textures are generally accessed during fragment shading much later in the graphics pipeline than
+ vertex attributes, the cost of a graphics driver stalling a texture modification is higher than 
+ modifying a vertex buffer. The driver may choose to avoid a stall entirely by creating temporary
+ buffer stores (ghosting) which is good for performance, but it may not be desirable for applications
+ that are already running out of buffer storage space.
+
+ The stalling and ghosting behaviour of graphics processors varies between different GPUs and 
+ driver versions. For optimal performance, only modify vertex buffers and textures when absolutely
+ necessary. If buffers must be modified, use application-side circular buffering so that the 
+ graphics processor can read from on buffer object while the application's CPU thread writes to 
+ another. This prevents the stalling and ghosting behaviours.
+ 
+
+ If the application uses Vulkan, then it is the responsiblity of the application developer to 
+ synchronise with the graphics processor. The appropriate mechanisms such as fences and semaphores
+ must be put in place to ensure that the application does not access a resource while the 
+ graphics processor is using it. This gives much more control over how and when resources are
+ accessed, but comes at the costt of a more complex application as the driver will not safeguard
+ against accessing data currently in use by the graphics processor.
+

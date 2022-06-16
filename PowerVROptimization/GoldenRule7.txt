@@ -1,0 +1,40 @@
+
+ Golden Rule 7: Do use mipmapping
+ -------------------------------
+
+ The seventh rule is realted to the sixth and recommends mipmapping your textures. Mipmaps are
+ smaller, pre-filtered variants of a texture image, representing different levels of detail of a 
+ texture. By using a minification filter mode that uses mipmaps, the graphics core can be set up to
+ automatically calculate which level of detail comes closest to mapping the texels of a mipmap to
+ pixels in the render target. This means it can then use the right mipmap for texturing.
+
+ Using mipmaps has two important advantages:
+ 1. It increases graphics rendering performance by massively improving texture cache efficiency,
+    especially in cases of strong minification - the texture data is more likely to fit inside
+    tile memory.
+ 2. It improves image quality by reducing aliasing that is caused by the under sampling of textures
+    that do not use mipmapping.
+ 
+ The single limitation of mipmapping is that it requires approximately a third more texture memory
+ per image. Depending on the situation, this cost maybe minor when compared to the benefits in 
+ terms of rendering speed and image quality.
+
+ There are some exceptions where mipmaps should be avoided. For example:
+
+ 1. Where filtering cannot be applied sensibly, such as for textures that contain non-image data
+    such as indicies or depth textures.
+ 2. Textures that are never minified, such as UI elements where texels are always mapped one-to-one to
+    pixels.
+
+ Ideally mipmaps should be created offline using a tool like PVRTexTool, which is available as part
+ of the PowerVR Graphics Tools and SDK.
+
+ It is possible to generate mipmaps at runtime, which can be useful for updating the mipmaps for a
+ render to texture target. In OpenGL ES this can be achieved using the function glGenerateMipmap.
+ In Vulkan there is no such built in function, and developers must generate mipmaps manually.
+
+ Generation of mipmaps online will not work with compressed textures such as PVRTC, which must have
+ their mipmaps generated offline. A decision must be made as to which cost is most approparite: 
+ the storage cost of offline generation, or the runtime cost (and increased code complexity in the
+ case of Vulkan) of generating mipmaps at runtime.
+

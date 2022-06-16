@@ -1,0 +1,33 @@
+
+ Golden Rule 4: Do perform clear
+ --------------------------------
+
+
+ The fourth rule is a recommendation to use clear. System memory accesses use more bandwidth and
+ power than any other graphics operation. Keeping memory accesses to a minimum will reduce the
+ chances of an application being memory bandwidth bound, and will also reduce the power consumption
+ of an application.
+
+ Most applications need to generate a colour image at the end of the render, but have no need to 
+ preserve depth and stencil data between frames.
+ Therefore, if frame buffer attachments do not need to be preserved at the end of a render, the 
+ appropriate frame buffer attachments can be invalidated to prevent them being written out to 
+ system memory.
+
+ Even fewer applications have a genuine need to upload the contents of the colour buffer's previous
+ contents at the start of a new frame. Therefore, if the contents previously written to a framebuffer
+ are not required, the driver can be informed not to load them from system memory to on-chip tile
+ memory through a clear operation at the start of the render.
+
+ The net result of performing a clear and invalidating framebuffers will be a massive reduction in 
+ system memory bandwidth usage, and reduced power consumption.
+
+ In OpenGL ES, a clear can be performed by calling the glClear function at the begining of a render.
+ Additionally, the glDiscardFramebufferEXT or glInvalidateFramebuffer functions can be used to 
+ invalidate a framebuffer at the end of a render.
+
+ In Vulkan, the API gives explicit control over load and store operations on framebuffer attachments.
+ When creating a framebuffer, set the load operation to either VK_ATTACHMENT_LOAD_OP_DONT_CARE or 
+ VK_ATTACHMENT_LOAD_OP_CLEAR. The store operation should preferably be set to 
+ VK_ATTACHMENT_STORE_OP_DONT_CARE unless the data requires preserving.
+

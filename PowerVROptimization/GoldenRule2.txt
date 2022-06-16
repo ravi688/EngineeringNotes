@@ -1,0 +1,43 @@
+
+ Golden Rule 2: Do Profile the Application
+ -----------------------------------------
+
+ The second rule is to profile the application. It is important to understand where performance is
+ bottlenecked before attempting to optimise an application.
+ This ensures effort is not wasted, or visual quality is not sacrified for minimal gains. If an 
+ optimisation is inappropriately applied to an area that is not bottlenecking performance, there
+ may be no performance improvement. In some cases, an incorrectly applied optimisation may lead to
+ worse performance.
+
+ Profiling tools are vital in this process for developers to understand what is happening in their
+ application, the hardware it is running on, and how and where bottlenecks are occuring. 
+ The PowerVRSDK includes the profiling tools PVRCarbon and PVRTune to aid development on platforms
+ powered by PowerVR hardware.
+
+ From the PowerVR Developer Technology team's experience, we have derived the following list of 
+ common bottlenecks generally found in applications that have not been optmised, as ordered from
+ most to least common.
+
+ The first point to make here is that generally, graphics developers are focused on the GPU, so
+ when they encounter an issue they tend to assume that any bottleneck comes from the graphics core.
+ However, in our experience, bottlenecks are fare more common in the CPU. It is only as we get to the
+ bottom of the list above that we begin to run into the bottlenecks caused by the graphics core.
+
+ The full list of potential bottlenecks, from most likely to least, is:
+ 	# CPU usage - For example, making too many unnecessary API calls
+	# Bandwidth Usage - On a mobile System-on-Chip (SoC), bandwidth is extremely limited 
+		compared to desktop platforms. This is because the same memory buffer is being shared
+		amongst various SoC components like the CPU, the graphics core, Radio, Bluetooth
+		stacks, and so on. In graphics applications bandwidth might be wasted by using
+		uncompressed textures etc.
+	# CPU/Graphics Core Synchronisation - The process of stopping the graphics core, doing some
+		processing on the CPU, and then starting the graphics core again is slow.
+	# Fragment Shader Instructions - The fragment shader code may not be optimized for peak
+		performance.
+	# Geometry and Texture uploads - Issues here could be due to, for example, the geometry being
+		changed too often every frame, or perhaps too many textures are being utilized.
+	# Vertex Shader Instructions - It is very uncommon for issues to occur with the vertex
+		shader resulting in bottlenecks. However, the shader code may not be optimized, just
+		like the fragment shader.
+	# Geometry Complexity - This is a very rare occurence but could occur when developers port
+		from consoles and desktop applications to mobile graphics cores.

@@ -1,0 +1,114 @@
+
+ Vulkan Shader Resource Binding
+ ----------------------------------
+
+ In this blog post we will go into further details of one of the most common state changes in 
+ scene rendering: binding shader resources such as uniform- or storage-buffers, images or samplers.
+
+ Binding Resources as Groups with DescriptorSets
+ -----------------------------------------------
+
+ To avoid performance pitfalls of traditional individual bindngs Vulkan organizes bindings in groups,
+ which are called DescriptorSets. Each group can itself provide multiple bindings and there can
+ be multiple such groups in parallel using a different set number. The number of available sets is
+ hardware-dependent, however there is a required minmum.
+
+ 1. DescriptorSetLayout: This object describes which bindings are in the DescriptorSet for every
+  shader stage. For examlpe, we define a binding 0 a constant buffer used by both vertex and 
+  fragment stages, at binding 1 a storage buffer and at 2 an image only for fragment stage.
+  It is the developer's responsibility to ensure the shaders (SPIR-V) have compatible definitions
+  for the DescriptorSet.
+ 
+ 2. PipelineLayout: As a pipeline (shader and most important rendering state) can have multiple
+  DescriptorSets, this object defines which DescriptorSetLayouts are used with each set binding
+  number. Using the name DescriptorSetLayouts at the same units across pipelines, has some
+  performance benefits, more about that later.
+
+ 3. DescriptorSet: This is the object that we will later use to bind the resources, therefore it 
+   will contain the actual data we reference. Image, Sampler or Buffers are referenced. 
+
+ 4. DescriptorPool: The DescriptorSets are allocated from the pool. Which layouts and how many sets
+   for each can be allocated is defined by the developer at creation time of the pool.
+
+ Optimized Bindings Across Pipelines
+ --------------------------------------
+
+ What are the motivation behind this design? At this point it is important to stress that Vulkan was
+ designed by many companies within the Khronos group, at least a dozen were making major 
+ contributions and more than twice that were seriously involved. Software developers were looking
+ for a design that helps them in usage scenarios where they were typically bottle-necked in the
+ past, and hardware vendors want interfaces giving enough flexibility within their implementations.
+
+ One scenario software developers often found that within the hot loop of rendering scenes, is
+ that they had bindings that happen at different frequencies.
+
+ for each view {
+ 	bind view resources 		// camera, environment ...
+	for each shader {
+		bind shader pipeline
+		bind shader resources 	// shader control values
+		for each material {
+			bind material resources // material parameters and textures
+			for each object {
+				bind object resources // object transforms
+				draw object
+			}
+		}
+	}
+ }
+
+ By making proper use of the parallel DescriptorSet bindings and PipelineLayouts the software 
+ developers can now represent this in Vulkan (increasing set number as we descend). In principle
+ you can do this in previous APIs as well, however, Vulkan tells the driver up fron that in this
+ example the "view" bindings, would be common to all shaders at the same binding slot. 
+ A traditional API would have to inspect all the software bindings when the shaders are changed
+ with less apriori knowledge about which are being overwitten and which are important to keep.
+
+ NOTE: Bound DescriptorSets stay active as long as the PipelineLayout for that binding slot is
+ matching.
+
+ We recommend making use of the different set numbers, to avoid redundant bindings. Putting many
+ bindings that have very different frequencies in the same DescriptorSet can be bad for overall
+ performance. Image a DescriptorSet with several textures and uniform buffer binding of which only
+ one changes, that's potentially a lot of data being sent to the GPU that effectively doesn't do 
+ anything.
+
+ Organizing Uniform Data Changes
+ ----------------------------------
+
+ Another scenario that software developers faced in changing just some shader data on the same
+ "loop" level. Material and object data such as matrices can be very frequent in large scenes 
+ (CAD applications...).
+
+ Vulkan provides different approaches for this as well. In principle uniform data can be fed in 
+ three ways:
+
+ 1. Uniform Buffer Binding: As part of a DescriptorSet t his would be the equivalent of an 
+   arbitrary glBindBufferRange(GL_UNIFORM_BUFFER, dset.binding, dset.bufferOffset, dset.bufferSize)
+   in OpenGL. All information for the actual binding by the CommandBuffer is stored within the
+   DescriptorSet itself.
+
+ 2. Uniform Buffer Dynamic Binding: Simlar as above, but with the ability to provide the bufferOffset
+   later when recording the CommandBuffer, a blit like this pseudo code: CommandBuffer->
+   BindDescriptorSet(setNumber, descriptorSEt, &offset). It is very practical to use when 
+   sub-allocating uniform buffers from a larger buffer allocation.
+
+ 3. Push Constants: PushConstants are uniform values that are stored within the CommandBuffers
+   and can be accessed from the shaders similar to a single global uniform buffer. They provide
+   enough bytes to hold some matrices or index values and the interpreation of the raw data
+   is up the shader. You may recall glProgramEnvParameter from OpenGL providing something similar.
+   The values are recorded with the CommandBuffer and cannot be altered afterwards: CommandBuffer
+   ->PushConstant(offset, size, &data).
+
+  PushConstants can be practical for very a small amount of information passed to drawcalls. 
+  Too much information would slow down CPU side due to additional allocations for the values being
+  done. Be aware that the CPU side updates may affect very low compexity draw-calls, too.
+ 
+  Dynamic offsets are very fast for NVIDIA hardware. Re-using the same DescriptorSet with just
+  differnt offsets is rather CPU-cache friendly as well compared to using and managing many
+  DescriptorSets. NVIDIA's OpenGL driver actually also optimizes uniform buffer binds where just the
+  range changes for a binding unit.
+
+  As you can see Vulkan being an "explicit" API provides various means to let developers express their
+  intended use in advance.
+

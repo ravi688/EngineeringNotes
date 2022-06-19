@@ -81,4 +81,11 @@
  write()   // Writes data to a file that has been opened for output.
 
  
+// Low level functions do not try to format data, read from a 
+// file, or write to a file.
+//
+// Low-level file I/O is not buffered. When an I/O statement is
+// executed, what is written goes directly to the file.
+// (This may slow the program's execution.)
+
 

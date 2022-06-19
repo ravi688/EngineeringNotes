@@ -1,0 +1,27 @@
+
+
+ Hungarian notation prefixes
+ -----------------------------------
+
+ c 	char
+ by 	BYTE (unsigned char)
+ n 	short int
+ x 	Usually a short int, used for x coordinate in graphics
+ y	Usually a short int, used for y coordinate in graphics
+ i 	int
+ b 	BOOL (int)
+ w 	WORD (unsigned int)
+ h	HANDLE (WORD)
+ dw 	DWORD (unsigned long int)
+ fn 	function, usually used with function pointers
+ s 	Character array (not necessarily NULL terminated)
+ sz 	Character string (must be NULL terminated)
+ p 	Pointer
+ lp 	long (or far) pointer
+ np 	short (or near) pointer
+
+ Hungarian notation helps to prevent assigning the wrong data
+ type to a variable, and helps you understand why you are using
+ a particular data object.
+
+

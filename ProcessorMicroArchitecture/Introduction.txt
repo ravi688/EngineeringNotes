@@ -56,40 +56,93 @@
 	simultaneously. For instance, the Intel Core i7 processor has multiple cores, and each
 	core is a two-way multithreaded.
 
+ OVERVIEW OF A PROCESSOR
+ -----------------------
 
+ Instructions are first fetched from the instruction cache. Then they are decoded to understand
+ their semantics. Afterwards, most processors apply some type of renaming to the register operands
+ in order to get rid of false dependences and increase the amount of ILP that can be exploited.
+ Then, instructions are dispatched to various buffers, depending on the type of instruction.
+ Nonmemory instructions are dispatched to the issue queue and the reorder buffer, whereas memory
+ instructions are dispatched to the load/store queue, in addition to the previous two.
+ Instructions remain in the issue queue until they are issued to execution.
+ Operands have to be read before executing an instruction, but this can be done in multiple ways.
+ Afterward, t he result is written back to the register file, and finally, the instruction is 
+ committed.
 
+ An instruction remains in the reorder buffer until it commits. The goal of the reorder buffer is to
+ store information about the instruction that is useful for its execution but also for squashing it
+ if necessary.
 
+ Memory operations are handled in a special manner. They need to compute the effective address, which
+ typically is done in the same way as an arithmetic instruction. However, besides accessing the data
+ cache, they may need to check their potential dependencies with other in-flight memory instructions.
+ The load/store queue stores the required information for this, and the associated logic is 
+ responsible for determining when an din which order memory instructions are executed.
 
+ In an in-order processor, instructions flow through these phases in the program order. This means
+ that if an instruction is stalled for some reason (e.g., an unavailable operand), younger 
+ instructions may not surpass it, so they may need to be stalled too.
 
+ In a superscalar processor, each one of the componenets described above has the capability of 
+ processing multiple instructions at the same time. Besides, it is quite normal to add buffers
+ between some pipeline stages to decouple them and in this manner allow the processor to hide
+ some of the stalls due to different types of events such as cache misses, operands not ready, etc.
+ These buffesr are quite common between fetch and decode, decode and rename and dispatch and issue.
 
+ OVERVIEW OF THE PIPELINE
+ ------------------------
 
+ The first part of the pipeline is responsible for fetching instructions. The main components of 
+ this part of the pipeline are (a) an instruction cache, where instructions are stored, and 
+ (b) a branch predictor that determines the address of the next fetch operation.
 
+ The next part is the instruction decode. The main components of this part are decoders, ROMs,
+ and ad-hoc circuitry, whose main objective is to identify the main attributes of the instruction
+ such as type (e.g., control flow) and resources that it will require (e.eg, register ports,
+ functional units).
 
+ Afterward, the instructions flow to the allocation phase, where the two main actions that are
+ performed are register renaming and dispatch. Register renaming entails changing the names of
+ the register operands with the purpose of removing all false dependencies and therefore
+ maximizing the instruction-level parallelism that the processor can exploit. This is done normally
+ through a a set of t ables that contain information about the current mapping of logical names to
+ physical ones and what names are not being used at this point in time, together with some logic
+ to analize dependencies among the multiple instructions being renamed simultaneously, since
+ the destination and source register of a procedure-consumer pari has to be renamed in a consitent
+ manner. The instruction dispatch consissts of reserving different resources that the instruction will
+ use, including entries in the reorder buffer, issue queue and load/store buffers. If resources
+ are not available, the corresponding instruction is stalled until some other instruction releases
+ the required resources.
 
+ The next phase in the pipeline is devoted to instruction issue. Instructions sit in the issue queue
+ until the issue logic determines that their execution can start. For in-order processors, the issue
+ logic is relatively simple. It basically consists of a scoreboard that indicates which operands
+ are available and a simple logic that checks whether the instruction sitting at the head of the 
+ queue have all their operands ready. For out-of-order processors, this logic is quite complex
+ since it entails analyzing all the instructions in the queue at every cycle to check for readiness
+ of their operands and availability of the resources that they will require for execution.
 
+ After being issued, instructions go to the execution part of the pipeline. Here there is a veriety
+ of execution units for different tyeps of operations, which normally include integer, floating-point
+ and logical operations. It is also quite common nowadays to include special units for SIMD
+ operations (single instruction, multiple data, also referred to as vector operations). Another
+ important component of the execution pipeline is the bypass logic. It consists basically of wires
+ that can move results from one unit to the input of other units and the associated logic that
+ termines whether results should use the bypass instead of using the data coming from the register
+ file. The design of the bypass network is critical in most processors since wire delays do not
+ scale at the same pace as gate delays, so they have an important contribution to the cycle time
+ of the processor.
 
+ Finally, instructions move to the commit phase. The main purpose of this part of the pipeline is
+ to give the appearance of sequential execution (i.e, same outcome) even though instructions are
+ issued and/or completed in a different order. The logic associated with this part of the pipeline
+ normally consists of checking the oldest instructions in the reorder buffer to see if they have
+ been completed. Once they are completed, instructions are removed from the pipeline, releasing
+ resources and doing some bookkeeping.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ Another part of the pipeline that affects multiple components is the recovery logic. Sometimes, 
+ the activity done by the processor has to be undone due to some misspeculation ( a typical
+ case is branch misbranchprediction). When this happens, instructions have to be flushed, and 
+ some storage (e.g., register file) has to be reset to a previous state.
 

@@ -1,0 +1,97 @@
+
+
+ CACHES
+ --------------
+
+ NOTE: Spatial refers to space
+       Temporal refers to time
+ 
+ By buffering such frequently accesssed data in a small and fast structure, the processor can give
+ the illusion to the application that accesses to main memory are in the order of a few cycles.
+
+ Moreover, although each core in a multicore processor has its own (private) first-level caches,
+ higher levels of the memory hierarchy are usually shared among multiple cores.
+
+ Normally, program data and instruction addresses are virtual addresses. Load and store instructions
+ as well as the fetch engine must perform address translation (more on this later) to translate
+ the virtual addresses to physical addresses.
+ The caches can be indexed with either virtual or physical addresses.
+ In the former case, the cache access can be initiated earlier, since the address translation can 
+ be performed in parallel with the cache access. To deal with potential aliasing problems, the 
+ tags are normally generated from the physical address.
+
+
+ ADDRESS TRANSLATION
+ -------------------------
+ 
+ The physical address space is defined as the range of addresses that the processor can generate on 
+ its bus. The virtual address space is the range of addresse than an application program can use.
+
+ Virtualizing the program addresses servies two main purposes:
+ 1. It allows each program to run unmodified on machiens with different amounts of physical memory
+    installed or on multitasking systems where physical memory is shared among many applications.
+ 2. Second, by isolating the virtual address spaces of different programs, we can protect applications
+    from each other on multitasking systems.
+
+ The virtualization of the linear address space is handled through the processor's paging mechanism.
+ When using paging, the address space is divided into pages (typically 4-8 KB in size). A page can
+ reside either in the main memory or in the disk (a swapped-out page). The operating system maintains
+ a mapping of virtual pages to physical pages through a structure called the page table.
+ The page table usually is stored in the main memory.
+
+ It is possible for two virtual pages to map to the same physical page. This is typical, for 
+ example, in shared-memory multithreaded applications. When this occurs, the two virtual pages
+ are "aliases" of the same physical entity, so this is called virtual aliasing.
+ When implementing the data cache, load/store buffers and all related management mechanisms, it
+ is very important to be able to handle virtual aliasing correctly.
+
+ When a program issues a load or store instruction, or an instruction fetch, the page map must be
+ consulted to translate the linear address to a physical address before the memory access can be
+ performed. A linear address is divided into two parts: the page offset and the page number. 
+ The page offset corresponds to the N least significant bits of the address -
+ where N = log2(PAGE_SIZE) - and identifices a byte address inside a page. The page number - the
+ remaining address bits - identifices a page inside the address space.
+
+ In a naive implementation, a load instruction (or instruction fetch) would have to perform several
+ memory accesses in order to translate the linear address to a physical one (the page table is in 
+ main memory). Since this is a critical operation, all modern processors implement a page table
+ cache, called the translation lookaside buffer (TLB). The TLB is a small hardware cache structure
+ that only caches page table entries.
+
+ In some processors, such as the Alpha series of processors, the TLB is entirely software controlled.
+ This means that the operating system has total freedom in how to organize the page map in main
+ memory and also total control of which mappings it wants to be cached to the TLB (there are special
+ instructions to add/remove entries from the TLB).
+
+ In the x86 architecture. The TLB is hardware controlled and is mostly transparent to the operating
+ system. In this architecture, the page map has a specific format that the hardware is able to 
+ understand. It is the operating system's responsibility to create the page map in a place in the 
+ memory where the hardware can find it and in the right format so that the hardware can parse it.
+
+ The TLB usually contains in the order of a few tens to a few hundred entries. Associativity
+ may vary, but since it is cretical for performance, its access time is usually a single cycle.
+ The TLB is always indexed by the page number of the virtual address, and it returns the
+ corresponding physical page number and some information for this page. The informatmion includes the
+ access rights for the page (if it can be read or written or if it is executable), and it is 
+ mapped to a main memory page or if it backed up in permanent storage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

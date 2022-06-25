@@ -1,0 +1,95 @@
+
+ INTRODUCTION
+ ----------------
+
+ This lecture presents a thorough study of the microarchitecture of contemporary microprocessors.
+ The focus is on implementation aspects, with discussions on alternative approaches and their
+ implications in terms of performance, power and cost.
+
+ The microarchitecture of processors has undergone a continuous evolution. For instance, Intel has
+ shipped a new microprocessor approximately every year in the recent past. This evolution is fueled
+ mainly by two types of factors: (1) technology scaling and (2) workload evolution.
+
+ Technology scaling often is referred to as Moore's law, which basically states that transistor
+ density doubles approximately every 2 years. Every technology generation provides transistors
+ that are smaller, faster and less energy consuming. This allows designers to increase the 
+ performance of processors, even without increasing their area and power.
+
+ On the other hand, processors adapt their features to better exploit the characteristics of user
+ applications, which evolve over time. For instance in recent years, we have witnesses an 
+ extraordinary increase in the use of multimedia applications, which have resulted in an increasing
+ number of features in the processors to better support them.
+
+ Classification of Microarchitectures
+ ------------------------------------
+ 
+ 1. Pipelined/Nonpipelined Processors (Pipelining increases instruction level parallelism ILP)
+ 2. In-Order/Out-of-Order Processors
+  	Out of order processors require more complex hardware than in-order ones.
+ 3. Scalar/Superscalar processors
+ 	a scalar processor cannot achieve a throughput greater than 1 instruction per cycle for
+	any code.
+	Note that a superscalar processor can execute more than 1 instruction at the same time in 
+	all pipeline stages and therefore can achieve a throughput higher than 1 instruction per
+	cycle for some codes.
+
+ 4. Vector Processors
+  	most microprocessors include a rich set of instructions that operate on relatively small
+	vectors (e.g., up to 8 singl-precision FP elements in the Intel AVX extensions).
+	These instructions are often referred to as SIMD (single instruction , multiple data)
+	instructions.
+	According to this definition, many processors nowadays are vector processors, although
+	their support for vector instructions varies significantly among them.
+
+ 5. Multicore Processors
+ 	A core is a unit that can process a sequential piece of code (usually referred to as a 
+	thread)
+
+ 6. Multithreaded Processors
+ 	A multithreaded processors is a processor that can execute simulatneously more than one
+	thread on some of its cores. Notes that both multicore and multithreaded processors
+	can execute multiple threads simultaneously, but the key distinguising feature is that
+	the threads use mostly different hardware resources in the case of a multicore, 
+	whereas they share most of the hardware resources in a multithreaded processor.
+
+	Multicore and multithreading are two orthogonal concepts, so they can be used
+	simultaneously. For instance, the Intel Core i7 processor has multiple cores, and each
+	core is a two-way multithreaded.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

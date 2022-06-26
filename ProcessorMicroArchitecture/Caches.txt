@@ -76,22 +76,50 @@
  mapped to a main memory page or if it backed up in permanent storage.
 
 
+ CACHE STRUCTURE ORGANIZATION
+ ------------------------------
+ 
+ Address decoder: an address decoder is a binary decoder that has two or more inputs for address bits
+ 	and one or more outputs for device selection signals. When the address for a particular
+	device appears on the address inputs, the decoder asserts the selection ouput for that
+	device. A dedicated, single-output address decoder may be incorporated into each device
+	on an address bus, or a single address decoder may serve multiple devices.
 
 
+ A single address decoder with n address input bits can serve up to 2^n devices. Several members
+ of the 7400 series of integrated circuits can be used as address decoders.
+ For example, when used as an address decoder, the 74154 provides four address inputs and sixteen
+ device selector outputs. An address decoder is a particular use of a binary decoder circuit
+ known as a "demultiplexer" or "demux" (the 74154 is commonly called a "4-to-16 demultiplexer"),
+ which has many other uses besides address decoding.
 
+ Address decoder selects the storage cell in a memory:
 
+ An address decoder is a commonly used component in microelectronics that is used to select
+ memory cells in randomly addressable memory devices.
 
+ Such a memory cell consists of a fixed number of memory elements or bits. The address decoder is 
+ connected to an address bus and reads the address created there. Using a special switching logic,
+ it uses this address to calculate which memory cell is t o be accessed. It then selects that
+ cell by selecting it via a special control line. This line is also known as the select line. 
+ In dynamic memories (DRAM), there are row and column select lines on the memory matrix, 
+ which are controlled by address decoders integrated in the chip.
 
+ Depending on the type of decoder, the logic used to select the memory cell can under certain
+ circumstances be programmable.
 
+ Address decoder selects the appropriate memory module:
 
+ An address decoder is also used to select the appropriate one of multiple memory modules or 
+ memory chips when a particular address is provided by the processor system's address bus.
 
+ For this purpose, the memory modules or memory chips have selection inputs, usually referred to
+ as chip select pin (CS) or chip enable pin (CE) pin. These inputs often have a negative logic
+ function.
 
-
-
-
-
-
-
-
+ The address decoder uses the different combinatorial logic to place the memory modules or chips
+ in the address space of a processor. The memory modules often have a smaller capacity than the
+ address space. In most cases, several modules can be used, even if they are completely identical
+ in structure. It must be ensured that they differ in the address range.
 
 

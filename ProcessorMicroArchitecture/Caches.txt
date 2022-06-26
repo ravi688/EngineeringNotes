@@ -122,4 +122,25 @@
  address space. In most cases, several modules can be used, even if they are completely identical
  in structure. It must be ensured that they differ in the address range.
 
+ Binary decoder:
+
+ Binary decoder is a combinational logic circuit that converts binary information from the n coded
+ inputs to a maximum of 2^n unique outputs. They are used in a wide variety of applications,
+ including instruction decoding, data multiplexing and data demultiplexing, seven segment displays,
+ and as address decoders for memory and port-mapped I/O.
+
+ There are several types of binary decoders, but in all cases a decoder is an electronic circuit
+ with multiple input and multiple output signals, which converts every unioque combination of 
+ input states to a specific combination of output states. In addition to integer data inputs, 
+ some decoders also have one or more "enable" inputs. When the enable input is negated (disabled),
+ all decoder outputs are forced tot  their inactive states.
+
+ Depending on its function, a binary decoder will convert binary information from n input signals
+ to as many as 2^n unique output signals. Some decoders have less than 2^n output lines; in such
+ cases, at least one output pattern may be repeated for different input values.
+
+ A binary deocder is usually implemented as either a stand-alone integrated circuit (IC) or as part
+ of a more complex IC. In the latter case the decoder may be synthesized by means of a hardware
+ description language such as VHDL or Verilog. Widely used decoders are often available in the form
+ of standardized ICs.
 

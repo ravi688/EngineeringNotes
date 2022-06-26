@@ -144,3 +144,58 @@
  description language such as VHDL or Verilog. Widely used decoders are often available in the form
  of standardized ICs.
 
+ Cache organization:
+
+ A cache consists of two main blocks: the tag array and the data array. The data array stores the 
+ application data or instructions, while the tag array is used by the processor in order to match
+ application addresses into data array entries.
+
+ The data array logically is organized as a group of sets. Each set is a collection of blocks.
+ The number of blocks in a set is called the degree of associativity of the cache. We also say that
+ a cache of associativity N is an N-way associative cache. The i-th cache way is defined to be the
+ collection of the i-th blocks of all sets in a cache. A case with an associativity degree of 1 is
+ called a directed mapped cache.
+
+ The memory address:
+ 1. The K least significant bits of the address are used to identify which bytes insie a cache block
+    we want to access. This part of the address is called the block offset.
+    Assuming the block size is Q bytes, then K = log2(Q)
+ 2. The next part of the address is called the index. As its name denotes, the inex is use to 
+    identify the position of a set into the data array. For a data cache of S sets, we need
+    M = log2(S) bits of index.
+ 3. For each block in the data array, the tag array holds some metadata: the rest of the address bits
+    and the state of the block (valid, etc.)
+
+ Different addresses can map to the same set in the data cache (they have the same index), so 
+ we need a mechanism to reverse-map indexes to addresses. The tag array serves this purpose.
+ The tag array has the same logical organization as the data array (same number of sets and 
+ associativity).
+
+ A memory requrest accesses both the data and the tag arrays using the index part of the address,
+ but in order to know if the block accessed corresponds to the given address, it must match the 
+ rest of the address bits with the tag bits. If the tag bits of the i-th block in the accessed set
+ match, then the correct data is in the i-th block of the corresponding data array set (this is
+ called a cache hit). If no tags in the set match the incoming address, then the requested data
+ does not reside in the cache (this is a cache miss), and a request to the higher levels of the
+ memory hierarchy must be issued and wait for the data to be installed in the cache before the
+ access can proceed.
+
+ Parallel Tag and Data Array Access
+ ------------------------------------
+
+ The access to the tag and data array can occur in parallel or serially.
+ 
+ In the first case, a whole set is read from the data array while the tag array is accessed.
+ The address is compared with the tag entries to find in which block of the set reside the data
+ that we are looking for. This information is fed to a multiplexor at the output of the data
+ array (the way multiplexor) that chooses one of the blocks of the set. Finally, the offset part of 
+ the address is used to extract the appropriate bytes from the chosen block (this process is called
+ data alignment).
+
+ The cache access is typically one of the critical paths in a processor; thus, for high-frequency
+ machines, it is pipelined.
+
+ So in the second case, There are two critical paths. The one is the path that goes through the tag
+ array, the tag comparison and the way multiplexor control. The other is the one that goes through
+ the data array and the way multiplexor data path.
+

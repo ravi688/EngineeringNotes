@@ -1,0 +1,432 @@
+
+
+ CACHES
+ --------------
+
+ NOTE: Spatial refers to space
+       Temporal refers to time
+ 
+ By buffering such frequently accesssed data in a small and fast structure, the processor can give
+ the illusion to the application that accesses to main memory are in the order of a few cycles.
+
+ Moreover, although each core in a multicore processor has its own (private) first-level caches,
+ higher levels of the memory hierarchy are usually shared among multiple cores.
+
+ Normally, program data and instruction addresses are virtual addresses. Load and store instructions
+ as well as the fetch engine must perform address translation (more on this later) to translate
+ the virtual addresses to physical addresses.
+ The caches can be indexed with either virtual or physical addresses.
+ In the former case, the cache access can be initiated earlier, since the address translation can 
+ be performed in parallel with the cache access. To deal with potential aliasing problems, the 
+ tags are normally generated from the physical address.
+
+
+ ADDRESS TRANSLATION
+ -------------------------
+ 
+ The physical address space is defined as the range of addresses that the processor can generate on 
+ its bus. The virtual address space is the range of addresse than an application program can use.
+
+ Virtualizing the program addresses servies two main purposes:
+ 1. It allows each program to run unmodified on machiens with different amounts of physical memory
+    installed or on multitasking systems where physical memory is shared among many applications.
+ 2. Second, by isolating the virtual address spaces of different programs, we can protect applications
+    from each other on multitasking systems.
+
+ The virtualization of the linear address space is handled through the processor's paging mechanism.
+ When using paging, the address space is divided into pages (typically 4-8 KB in size). A page can
+ reside either in the main memory or in the disk (a swapped-out page). The operating system maintains
+ a mapping of virtual pages to physical pages through a structure called the page table.
+ The page table usually is stored in the main memory.
+
+ It is possible for two virtual pages to map to the same physical page. This is typical, for 
+ example, in shared-memory multithreaded applications. When this occurs, the two virtual pages
+ are "aliases" of the same physical entity, so this is called virtual aliasing.
+ When implementing the data cache, load/store buffers and all related management mechanisms, it
+ is very important to be able to handle virtual aliasing correctly.
+
+ When a program issues a load or store instruction, or an instruction fetch, the page map must be
+ consulted to translate the linear address to a physical address before the memory access can be
+ performed. A linear address is divided into two parts: the page offset and the page number. 
+ The page offset corresponds to the N least significant bits of the address -
+ where N = log2(PAGE_SIZE) - and identifices a byte address inside a page. The page number - the
+ remaining address bits - identifices a page inside the address space.
+
+ In a naive implementation, a load instruction (or instruction fetch) would have to perform several
+ memory accesses in order to translate the linear address to a physical one (the page table is in 
+ main memory). Since this is a critical operation, all modern processors implement a page table
+ cache, called the translation lookaside buffer (TLB). The TLB is a small hardware cache structure
+ that only caches page table entries.
+
+ In some processors, such as the Alpha series of processors, the TLB is entirely software controlled.
+ This means that the operating system has total freedom in how to organize the page map in main
+ memory and also total control of which mappings it wants to be cached to the TLB (there are special
+ instructions to add/remove entries from the TLB).
+
+ In the x86 architecture. The TLB is hardware controlled and is mostly transparent to the operating
+ system. In this architecture, the page map has a specific format that the hardware is able to 
+ understand. It is the operating system's responsibility to create the page map in a place in the 
+ memory where the hardware can find it and in the right format so that the hardware can parse it.
+
+ The TLB usually contains in the order of a few tens to a few hundred entries. Associativity
+ may vary, but since it is cretical for performance, its access time is usually a single cycle.
+ The TLB is always indexed by the page number of the virtual address, and it returns the
+ corresponding physical page number and some information for this page. The informatmion includes the
+ access rights for the page (if it can be read or written or if it is executable), and it is 
+ mapped to a main memory page or if it backed up in permanent storage.
+
+
+ CACHE STRUCTURE ORGANIZATION
+ ------------------------------
+ 
+ Address decoder: an address decoder is a binary decoder that has two or more inputs for address bits
+ 	and one or more outputs for device selection signals. When the address for a particular
+	device appears on the address inputs, the decoder asserts the selection ouput for that
+	device. A dedicated, single-output address decoder may be incorporated into each device
+	on an address bus, or a single address decoder may serve multiple devices.
+
+
+ A single address decoder with n address input bits can serve up to 2^n devices. Several members
+ of the 7400 series of integrated circuits can be used as address decoders.
+ For example, when used as an address decoder, the 74154 provides four address inputs and sixteen
+ device selector outputs. An address decoder is a particular use of a binary decoder circuit
+ known as a "demultiplexer" or "demux" (the 74154 is commonly called a "4-to-16 demultiplexer"),
+ which has many other uses besides address decoding.
+
+ Address decoder selects the storage cell in a memory:
+
+ An address decoder is a commonly used component in microelectronics that is used to select
+ memory cells in randomly addressable memory devices.
+
+ Such a memory cell consists of a fixed number of memory elements or bits. The address decoder is 
+ connected to an address bus and reads the address created there. Using a special switching logic,
+ it uses this address to calculate which memory cell is t o be accessed. It then selects that
+ cell by selecting it via a special control line. This line is also known as the select line. 
+ In dynamic memories (DRAM), there are row and column select lines on the memory matrix, 
+ which are controlled by address decoders integrated in the chip.
+
+ Depending on the type of decoder, the logic used to select the memory cell can under certain
+ circumstances be programmable.
+
+ Address decoder selects the appropriate memory module:
+
+ An address decoder is also used to select the appropriate one of multiple memory modules or 
+ memory chips when a particular address is provided by the processor system's address bus.
+
+ For this purpose, the memory modules or memory chips have selection inputs, usually referred to
+ as chip select pin (CS) or chip enable pin (CE) pin. These inputs often have a negative logic
+ function.
+
+ The address decoder uses the different combinatorial logic to place the memory modules or chips
+ in the address space of a processor. The memory modules often have a smaller capacity than the
+ address space. In most cases, several modules can be used, even if they are completely identical
+ in structure. It must be ensured that they differ in the address range.
+
+ Binary decoder:
+
+ Binary decoder is a combinational logic circuit that converts binary information from the n coded
+ inputs to a maximum of 2^n unique outputs. They are used in a wide variety of applications,
+ including instruction decoding, data multiplexing and data demultiplexing, seven segment displays,
+ and as address decoders for memory and port-mapped I/O.
+
+ There are several types of binary decoders, but in all cases a decoder is an electronic circuit
+ with multiple input and multiple output signals, which converts every unioque combination of 
+ input states to a specific combination of output states. In addition to integer data inputs, 
+ some decoders also have one or more "enable" inputs. When the enable input is negated (disabled),
+ all decoder outputs are forced tot  their inactive states.
+
+ Depending on its function, a binary decoder will convert binary information from n input signals
+ to as many as 2^n unique output signals. Some decoders have less than 2^n output lines; in such
+ cases, at least one output pattern may be repeated for different input values.
+
+ A binary deocder is usually implemented as either a stand-alone integrated circuit (IC) or as part
+ of a more complex IC. In the latter case the decoder may be synthesized by means of a hardware
+ description language such as VHDL or Verilog. Widely used decoders are often available in the form
+ of standardized ICs.
+
+ Cache organization:
+
+ A cache consists of two main blocks: the tag array and the data array. The data array stores the 
+ application data or instructions, while the tag array is used by the processor in order to match
+ application addresses into data array entries.
+
+ The data array logically is organized as a group of sets. Each set is a collection of blocks.
+ The number of blocks in a set is called the degree of associativity of the cache. We also say that
+ a cache of associativity N is an N-way associative cache. The i-th cache way is defined to be the
+ collection of the i-th blocks of all sets in a cache. A case with an associativity degree of 1 is
+ called a directed mapped cache.
+
+ The memory address:
+ 1. The K least significant bits of the address are used to identify which bytes insie a cache block
+    we want to access. This part of the address is called the block offset.
+    Assuming the block size is Q bytes, then K = log2(Q)
+ 2. The next part of the address is called the index. As its name denotes, the inex is use to 
+    identify the position of a set into the data array. For a data cache of S sets, we need
+    M = log2(S) bits of index.
+ 3. For each block in the data array, the tag array holds some metadata: the rest of the address bits
+    and the state of the block (valid, etc.)
+
+ Different addresses can map to the same set in the data cache (they have the same index), so 
+ we need a mechanism to reverse-map indexes to addresses. The tag array serves this purpose.
+ The tag array has the same logical organization as the data array (same number of sets and 
+ associativity).
+
+ A memory requrest accesses both the data and the tag arrays using the index part of the address,
+ but in order to know if the block accessed corresponds to the given address, it must match the 
+ rest of the address bits with the tag bits. If the tag bits of the i-th block in the accessed set
+ match, then the correct data is in the i-th block of the corresponding data array set (this is
+ called a cache hit). If no tags in the set match the incoming address, then the requested data
+ does not reside in the cache (this is a cache miss), and a request to the higher levels of the
+ memory hierarchy must be issued and wait for the data to be installed in the cache before the
+ access can proceed.
+
+ Parallel Tag and Data Array Access
+ ------------------------------------
+
+ The access to the tag and data array can occur in parallel or serially.
+ 
+ In the first case, a whole set is read from the data array while the tag array is accessed.
+ The address is compared with the tag entries to find in which block of the set reside the data
+ that we are looking for. This information is fed to a multiplexor at the output of the data
+ array (the way multiplexor) that chooses one of the blocks of the set. Finally, the offset part of 
+ the address is used to extract the appropriate bytes from the chosen block (this process is called
+ data alignment).
+
+ The cache access is typically one of the critical paths in a processor; thus, for high-frequency
+ machines, it is pipelined.
+
+ So in the second case, There are two critical paths. The one is the path that goes through the tag
+ array, the tag comparison and the way multiplexor control. The other is the one that goes through
+ the data array and the way multiplexor data path.
+
+ Serial Tag and Data Array Access
+ -------------------------------------
+
+ An alternative design is one where the tag array is accessed earlier than the data array.
+ After we access the tag array and perform the tag comparison, we know exactly which of the ways
+ of the data array we must access, so we can change the organization of the cache to take advantage
+ of this fact and remove the way multiplexor.
+ Another benefit of this design is that it has lower energy consumption: the way-enable signal only
+ activates the way where the requested data resides.
+
+ By removing the way multiplexor, we have relaxed the critical paths significantly. First, the 
+ data array to way multiplexor data path is entirely removed. Second, the length of the critical
+ path trough the tag array is reduced. This allows this design to run at a higher frequency than
+ the previousone. On the other hand, this design requires one more cycle to access the cache.
+
+ It is evident that each design presents different tradeoffs. The parallel tag and data array 
+ access design may have lower clock frequency and higher power, but also requires one less cycle
+ to access the cache. For an out-of-order processor that can hide memory latency, if the data
+ cache is the determinant factor for the frequency of the processor, it makes sens to implement
+ serial tag and data accesses. On the other hand, for an in-order machine where memory latency is
+ important it may make sense to access tags and data in parallel.
+
+ Assosiciativity Considerations
+ -------------------------------
+ 
+ Direct mapped caches are the fastest to access. In case of paralle tag and data array access, it is
+ the same but without the way multiplexor in the critical path; we do not need the multiplexor 
+ because we have one way. In case of serial tag and data array access, it is the same but without
+ the path from the tag comparison to the data array.
+
+ Unfortunately, directt mapped caches suffer more conflict misses than associative caches. A conflict
+ miss occurs when N frequently accessed cache blocks map to the same cache set, and the cache
+ associativity is M < N. Obviously, the higher the cache associativity, the less conflict misses the
+ cache will suffer. On the other hand, the more ways a cache has, the bigger the way multiplexor
+ becomes, and this may affect the processor's cycle time.
+
+ Several proposals exists that attempt to address this situation by modifying the cache indexing
+ function so that an N-way associative cache (where N is small; usually 1 or 2) gives the 
+ illusion of a cache of higher associativity.
+
+ LOckup-Free Caches
+ ---------------------
+
+ When a memory request misses in the first level cache, the request is forwarded to the higher levels
+ of the memory hierarchy. The missing cache access cannot be completed unitl the forwarded request
+ returns with the data. A blocking cache system will stall the processor until the outstanding miss
+ is serviced. Although this solution has low complexity, stalling the processor on a cache miss can
+ severly degrade performance.
+
+ An alternative is to continue executing instructions while the miss is serviced. This requires the 
+ processor to implement some dependence tracking mechanism (e.g., a scoreboard) that allows the 
+ instrucxtions that do not depend on the missing instruction to proceed while the dependent ones
+ are blocked, waiting for the request to be serviced. Such a mechanism of course already exists in 
+ out-of-order processors. Another requirement is a nonblocking or lock-up free cache.
+
+ A lockup-free cache is one that allows the processor to issue new load/store instructions even in 
+ the presence of pending cache misses. The concept  of a lockup-free cache was first introduced
+ by Kroft. In his work, Kroft describes the use of special registers called miss status/information
+ holding registers (MSHRs) to hold information about pending misses. Kroft also describes an
+ input stack to hold the fetched data until they are written to the data array (this input stack is
+ called the fill buffer in modern microprocessors). In the context of lockup-free caches, misses
+ can be classified into three categories:
+
+ - Primary miss: the first miss to a cache block. This miss will initiate a fetch request to the 
+ 	higher level of the memory hierarchy.
+
+ - Secondary miss: subsequent miss to a cache block that is already being fetched due to a previous
+ 	primary miss.
+
+ - Structural-stall miss: a secondary miss that the available hardware resouruces (i.e., MSHRs)
+ 	cannot handle. Such a miss will cause a stall due uto a structural hazard.
+
+ Serveral implementations of MSHRs are possible, with different complexity/performance tradeoffs.
+ Here we focus on three such organizations.
+ 
+ Implicitly Addressed MSHRs
+ ---------------------------
+ 
+ Each MSHR contains the data array block address of the pending misses, along with a valid bit.
+ The block address and the valid bit of an MSHR are set on a primary miss. A comparator also is
+ included, in order to match future misses with this MSHR in order to record all secondary misses
+ of a block in the same MSHR.
+
+ Assuming the cache block is divided into N words (typically 32-bit or 64-bit in size), then the 
+ MSHR also contains N entries recording miss information. Each entry contains the destination
+ register of the missing instrucxtion and some format information. The format field holds
+ information such as the size (in bytes) of the load instruction, whether the result should be 
+ sign or zero extended, the offset inside the word (e.g., for a byte-sized load), etc.
+
+ Explicitly Addressed MSHRs
+ ----------------------------
+
+ One issue with the implicitly addressed MSHRs is that they can support only one outstanding misss
+ per word. A secondary miss on an already eactive word field will become a strutural-stall miss.
+ The resons for this is that the block offset (the address inside the block) of a missing 
+ instruction is implied by the position of the field inside the MSHR.
+ 
+ Another MSHR design proposed by Farkas and Jouppi that improves on the basic MSHR by adding block
+ offset information to each MSHR field. Two misses on the same word are allowed to accupy two 
+ different entries with the same block offset, inside the same MSHR. This organization also allows
+ decoupling the number of fields from the block size: instead of being forced to have one field per
+ block word, we can have as many as the number of total oustanding  misses we awant to support
+ per block.
+
+ In-Cache MSHRs
+ -------------------
+
+ An alternative organization that reduced the amount of storage required to hold MSHR information was
+ proposed by Franklin and Sohi. This proposal is based on the observation that the cache block
+ waiting to be filled can serve as the MSHR sotrage. With in-case MSHRs, the tag array needs to hold
+ one more bit per cache block, the transient bit, to indicate that the block is being fetched.
+ When in transient mode, tht tag array holds the address of the block being fetched, and the 
+ corresponding data array entry holds MSHR information. The in-cache MSHR can be implicity addressed
+ or explicitly addressed. The benefit of this design is that we can have as many in-flight primary
+ mises as blocks in the cache.
+
+ 
+ Multiported Caches
+ ------------------------
+
+ In order to sustain a high execution bandwidth, most modern microprocessors are able to issue up
+ to two load/store instruction per cycle. There are various methods to build a dual ported cache
+ ( a cache that supports two operations per cycle), each with different design tradeoffs.
+ Below we design a true dual-ported cache design, and then we describe how different commercial
+ microporcessors try to approximate this design.
+
+ True Multiported Cache Design
+ --------------------------------
+
+ In the tru multiported design, all the control and data paths inside the cache are replicated. For a
+ true dual-ported cache, this means that there are two address decoders for the tag and data array,
+ two way multiplexors, double the tag comparators, two aligners, etc. The tag and data array are 
+ not replicated, but their internal design is changed to allow two parallel reads to each array cell
+ (allowing two writes per cycle in the cache does not necessarily imply two write ports to the array
+ if the processor can guarantee that 1 bit cannot be written twice in a cycle.) Although this design
+ provides the highest bandwidth, implementing two read ports to the arrays significantly increases
+ the cache access time, which can affect the processor clock cycle. It is for this reason that
+ no commercial processor that we know of implements a true dual-ported cache.
+
+ Array Replication
+ ------------------------
+
+ This design is similar to the true dual-ported design, only, we replicate the arrays as well. 
+ Two alternatives are presented: replicating both the tag and data array (i.e., replicating the
+ whole cache) or replicating only the data array and mainting a true dual-ported tag array.
+ 
+ By imitating a dual-ported cache with two copies of a single-ported cache, we can achieve full
+ bandwidth without hurting the processor cycle time. The downside is that this design wastes area, 
+ although compared to a true dual-ported design, the area difference is not big. This implementation
+ must keep the two replicas of data always sychronized, which means that store instructions, cache
+ replacements, block invalidation and similar operations have to be broadcast to both copies of the
+ cache. Several sources indicate that the Alpha 21164 microprocessor follows t his design, although
+ it is not clear if it replicates only the data array of the entire cache.
+
+ Virtual Multiporting
+ ------------------------
+
+ The IBM Power2 and the Alpha 21264 are two examples of processors that implement virtual multiporting
+ to provide dual-ported access toa  single-ported cache. Virtual multiporting utilizes time-division
+ multiplexing to perform mutiple accesses to a single-ported cache in a single cycle. In particular, 
+ the Alpha 21264 double-pumps its data array to provide the illusion that it implements two read 
+ ports. In this design, the first load operation accesses the array in the first half of the cycle, 
+ while the second load operation proceeds in the second hanlf of the cycle. This technique is 
+ abandoned in the latest microprocessor designs because it doesn't scale. Modern microprocessors
+ that operate at frequencies of several gigahertz cannot afford to double-pump that data array.
+
+ Multibanking
+ ------------------
+
+ Multibanking divides the cache into multuiple small arrays (banks), each single ported. 
+ Multiple requests can be issues in a cycle if they access to different banks. When two requests
+ map t o tthe same cache bank, we say we have a bank conflict. With multibanking, a dual-ported 
+ cache still has to have two address decoders for the tag and data arrays, two way multiplexors, 
+ two tag comparators, two aligners, etc. Contrary to the true dual-ported cache, though, the tag
+ and data arrays do not have to have multiple ports. When empoying multibanking, there are serveral
+ ways to organize the data in the cache depending on how the indexing function maps addresses to 
+ banks, how the cache block is distribuited (or not) among banks, how many banks there are, etc.
+ Multibanking is the preferred method for emulating multiple ports in today's high-performance 
+ microprocessors.
+
+ The Opteron has a 64-KB first-level data cache, two-way set associative with a cache block of 64-B.
+ Each way of the cache consists of eight 4-KB banks. The total cache consists of 16 banks, but a 
+ memory instruction accesses one bank of each way for a total of two. Any combination of two 
+ load/store requests can issue at the same cycle if they access different banks.
+
+ 
+ INSTRUCTION CACHES
+ ---------------------
+
+ Instruction caches have a simpiler organization compared to data caches. This is because of different
+ requirements of instruction fetching vs. program data accesses.
+
+ Multiported vs. Singl Ported
+ -----------------------------
+
+ Program instructions usually are placed consecutively in the main memory, and instruction fetch
+ follows this sequential stream of addresse (except in case of control-flow instructions). To better
+ take advantage of this program property, an instruction cache read usually outputs an entire cache
+ block of data ( a data cache read could output as little a single byte if required), which contains
+ multiple consecutive instructions. Thus, a single instruction cache access, on average, feeds
+ multiple instructions to the rest of the machien. Due to this, instruction caches are implemented
+ as single-ported caches.
+
+ Lookup Free vs.Blocking
+ -------------------------
+ 
+ Instruction caches are normally blocking caches, i.e., they are not lockup-free caches. The reason
+ lockup-free caches work for data requests is that we can find future instructions (after the 
+ missing load) to execute that do not need the load data. This is not true for instruction fetching.
+ 
+ All instructions implictily depend on their previous in-program order instruction. This is a
+ requirement of correct execution. This means that if we miss in the instruction cache, we must wait
+ for this miss to be satisfied before we can fetch the next instruction. Thus, there is no
+ performance benefit in implementing lockup-free instruction caches.
+
+ Other Considerations
+ --------------------
+
+ An instruction cache will parallel tag and data array access requires one cycle less to fetch
+ instructions compared to one with serial access. This is usually the prefered design because it 
+ reduces the penalty of restarting the instruction fetch from the correct address whenever we 
+ mispredict the next instruction address. On the other hand, such a desing may have lower clock
+ frequency and higher power, so careful studies have to be performed to balance the tradeoffs in 
+ each case.
+
+ Instruction cache associativity is also another parameter that varies among designs. Simlar
+ to data caches, lower associativity caches have lower access time, which allows higher frequencye,
+ but higher associaciativity caches suffer less conflict misses. The sequential access nature of
+ instruction caches prodcues less conflict misses compared to the random access pattern of data
+ caches, but instruction cache associativity still requires careful tuning of the design.
+

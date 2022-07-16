@@ -384,4 +384,49 @@
  memory instruction accesses one bank of each way for a total of two. Any combination of two 
  load/store requests can issue at the same cycle if they access different banks.
 
+ 
+ INSTRUCTION CACHES
+ ---------------------
+
+ Instruction caches have a simpiler organization compared to data caches. This is because of different
+ requirements of instruction fetching vs. program data accesses.
+
+ Multiported vs. Singl Ported
+ -----------------------------
+
+ Program instructions usually are placed consecutively in the main memory, and instruction fetch
+ follows this sequential stream of addresse (except in case of control-flow instructions). To better
+ take advantage of this program property, an instruction cache read usually outputs an entire cache
+ block of data ( a data cache read could output as little a single byte if required), which contains
+ multiple consecutive instructions. Thus, a single instruction cache access, on average, feeds
+ multiple instructions to the rest of the machien. Due to this, instruction caches are implemented
+ as single-ported caches.
+
+ Lookup Free vs.Blocking
+ -------------------------
+ 
+ Instruction caches are normally blocking caches, i.e., they are not lockup-free caches. The reason
+ lockup-free caches work for data requests is that we can find future instructions (after the 
+ missing load) to execute that do not need the load data. This is not true for instruction fetching.
+ 
+ All instructions implictily depend on their previous in-program order instruction. This is a
+ requirement of correct execution. This means that if we miss in the instruction cache, we must wait
+ for this miss to be satisfied before we can fetch the next instruction. Thus, there is no
+ performance benefit in implementing lockup-free instruction caches.
+
+ Other Considerations
+ --------------------
+
+ An instruction cache will parallel tag and data array access requires one cycle less to fetch
+ instructions compared to one with serial access. This is usually the prefered design because it 
+ reduces the penalty of restarting the instruction fetch from the correct address whenever we 
+ mispredict the next instruction address. On the other hand, such a desing may have lower clock
+ frequency and higher power, so careful studies have to be performed to balance the tradeoffs in 
+ each case.
+
+ Instruction cache associativity is also another parameter that varies among designs. Simlar
+ to data caches, lower associativity caches have lower access time, which allows higher frequencye,
+ but higher associaciativity caches suffer less conflict misses. The sequential access nature of
+ instruction caches prodcues less conflict misses compared to the random access pattern of data
+ caches, but instruction cache associativity still requires careful tuning of the design.
 

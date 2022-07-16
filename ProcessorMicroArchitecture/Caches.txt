@@ -315,4 +315,73 @@
  or explicitly addressed. The benefit of this design is that we can have as many in-flight primary
  mises as blocks in the cache.
 
+ 
+ Multiported Caches
+ ------------------------
+
+ In order to sustain a high execution bandwidth, most modern microprocessors are able to issue up
+ to two load/store instruction per cycle. There are various methods to build a dual ported cache
+ ( a cache that supports two operations per cycle), each with different design tradeoffs.
+ Below we design a true dual-ported cache design, and then we describe how different commercial
+ microporcessors try to approximate this design.
+
+ True Multiported Cache Design
+ --------------------------------
+
+ In the tru multiported design, all the control and data paths inside the cache are replicated. For a
+ true dual-ported cache, this means that there are two address decoders for the tag and data array,
+ two way multiplexors, double the tag comparators, two aligners, etc. The tag and data array are 
+ not replicated, but their internal design is changed to allow two parallel reads to each array cell
+ (allowing two writes per cycle in the cache does not necessarily imply two write ports to the array
+ if the processor can guarantee that 1 bit cannot be written twice in a cycle.) Although this design
+ provides the highest bandwidth, implementing two read ports to the arrays significantly increases
+ the cache access time, which can affect the processor clock cycle. It is for this reason that
+ no commercial processor that we know of implements a true dual-ported cache.
+
+ Array Replication
+ ------------------------
+
+ This design is similar to the true dual-ported design, only, we replicate the arrays as well. 
+ Two alternatives are presented: replicating both the tag and data array (i.e., replicating the
+ whole cache) or replicating only the data array and mainting a true dual-ported tag array.
+ 
+ By imitating a dual-ported cache with two copies of a single-ported cache, we can achieve full
+ bandwidth without hurting the processor cycle time. The downside is that this design wastes area, 
+ although compared to a true dual-ported design, the area difference is not big. This implementation
+ must keep the two replicas of data always sychronized, which means that store instructions, cache
+ replacements, block invalidation and similar operations have to be broadcast to both copies of the
+ cache. Several sources indicate that the Alpha 21164 microprocessor follows t his design, although
+ it is not clear if it replicates only the data array of the entire cache.
+
+ Virtual Multiporting
+ ------------------------
+
+ The IBM Power2 and the Alpha 21264 are two examples of processors that implement virtual multiporting
+ to provide dual-ported access toa  single-ported cache. Virtual multiporting utilizes time-division
+ multiplexing to perform mutiple accesses to a single-ported cache in a single cycle. In particular, 
+ the Alpha 21264 double-pumps its data array to provide the illusion that it implements two read 
+ ports. In this design, the first load operation accesses the array in the first half of the cycle, 
+ while the second load operation proceeds in the second hanlf of the cycle. This technique is 
+ abandoned in the latest microprocessor designs because it doesn't scale. Modern microprocessors
+ that operate at frequencies of several gigahertz cannot afford to double-pump that data array.
+
+ Multibanking
+ ------------------
+
+ Multibanking divides the cache into multuiple small arrays (banks), each single ported. 
+ Multiple requests can be issues in a cycle if they access to different banks. When two requests
+ map t o tthe same cache bank, we say we have a bank conflict. With multibanking, a dual-ported 
+ cache still has to have two address decoders for the tag and data arrays, two way multiplexors, 
+ two tag comparators, two aligners, etc. Contrary to the true dual-ported cache, though, the tag
+ and data arrays do not have to have multiple ports. When empoying multibanking, there are serveral
+ ways to organize the data in the cache depending on how the indexing function maps addresses to 
+ banks, how the cache block is distribuited (or not) among banks, how many banks there are, etc.
+ Multibanking is the preferred method for emulating multiple ports in today's high-performance 
+ microprocessors.
+
+ The Opteron has a 64-KB first-level data cache, two-way set associative with a cache block of 64-B.
+ Each way of the cache consists of eight 4-KB banks. The total cache consists of 16 banks, but a 
+ memory instruction accesses one bank of each way for a total of two. Any combination of two 
+ load/store requests can issue at the same cycle if they access different banks.
+
 

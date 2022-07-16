@@ -273,4 +273,46 @@
 
  Serveral implementations of MSHRs are possible, with different complexity/performance tradeoffs.
  Here we focus on three such organizations.
+ 
+ Implicitly Addressed MSHRs
+ ---------------------------
+ 
+ Each MSHR contains the data array block address of the pending misses, along with a valid bit.
+ The block address and the valid bit of an MSHR are set on a primary miss. A comparator also is
+ included, in order to match future misses with this MSHR in order to record all secondary misses
+ of a block in the same MSHR.
+
+ Assuming the cache block is divided into N words (typically 32-bit or 64-bit in size), then the 
+ MSHR also contains N entries recording miss information. Each entry contains the destination
+ register of the missing instrucxtion and some format information. The format field holds
+ information such as the size (in bytes) of the load instruction, whether the result should be 
+ sign or zero extended, the offset inside the word (e.g., for a byte-sized load), etc.
+
+ Explicitly Addressed MSHRs
+ ----------------------------
+
+ One issue with the implicitly addressed MSHRs is that they can support only one outstanding misss
+ per word. A secondary miss on an already eactive word field will become a strutural-stall miss.
+ The resons for this is that the block offset (the address inside the block) of a missing 
+ instruction is implied by the position of the field inside the MSHR.
+ 
+ Another MSHR design proposed by Farkas and Jouppi that improves on the basic MSHR by adding block
+ offset information to each MSHR field. Two misses on the same word are allowed to accupy two 
+ different entries with the same block offset, inside the same MSHR. This organization also allows
+ decoupling the number of fields from the block size: instead of being forced to have one field per
+ block word, we can have as many as the number of total oustanding  misses we awant to support
+ per block.
+
+ In-Cache MSHRs
+ -------------------
+
+ An alternative organization that reduced the amount of storage required to hold MSHR information was
+ proposed by Franklin and Sohi. This proposal is based on the observation that the cache block
+ waiting to be filled can serve as the MSHR sotrage. With in-case MSHRs, the tag array needs to hold
+ one more bit per cache block, the transient bit, to indicate that the block is being fetched.
+ When in transient mode, tht tag array holds the address of the block being fetched, and the 
+ corresponding data array entry holds MSHR information. The in-cache MSHR can be implicity addressed
+ or explicitly addressed. The benefit of this design is that we can have as many in-flight primary
+ mises as blocks in the cache.
+
 

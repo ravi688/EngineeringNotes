@@ -199,3 +199,78 @@
  array, the tag comparison and the way multiplexor control. The other is the one that goes through
  the data array and the way multiplexor data path.
 
+ Serial Tag and Data Array Access
+ -------------------------------------
+
+ An alternative design is one where the tag array is accessed earlier than the data array.
+ After we access the tag array and perform the tag comparison, we know exactly which of the ways
+ of the data array we must access, so we can change the organization of the cache to take advantage
+ of this fact and remove the way multiplexor.
+ Another benefit of this design is that it has lower energy consumption: the way-enable signal only
+ activates the way where the requested data resides.
+
+ By removing the way multiplexor, we have relaxed the critical paths significantly. First, the 
+ data array to way multiplexor data path is entirely removed. Second, the length of the critical
+ path trough the tag array is reduced. This allows this design to run at a higher frequency than
+ the previousone. On the other hand, this design requires one more cycle to access the cache.
+
+ It is evident that each design presents different tradeoffs. The parallel tag and data array 
+ access design may have lower clock frequency and higher power, but also requires one less cycle
+ to access the cache. For an out-of-order processor that can hide memory latency, if the data
+ cache is the determinant factor for the frequency of the processor, it makes sens to implement
+ serial tag and data accesses. On the other hand, for an in-order machine where memory latency is
+ important it may make sense to access tags and data in parallel.
+
+ Assosiciativity Considerations
+ -------------------------------
+ 
+ Direct mapped caches are the fastest to access. In case of paralle tag and data array access, it is
+ the same but without the way multiplexor in the critical path; we do not need the multiplexor 
+ because we have one way. In case of serial tag and data array access, it is the same but without
+ the path from the tag comparison to the data array.
+
+ Unfortunately, directt mapped caches suffer more conflict misses than associative caches. A conflict
+ miss occurs when N frequently accessed cache blocks map to the same cache set, and the cache
+ associativity is M < N. Obviously, the higher the cache associativity, the less conflict misses the
+ cache will suffer. On the other hand, the more ways a cache has, the bigger the way multiplexor
+ becomes, and this may affect the processor's cycle time.
+
+ Several proposals exists that attempt to address this situation by modifying the cache indexing
+ function so that an N-way associative cache (where N is small; usually 1 or 2) gives the 
+ illusion of a cache of higher associativity.
+
+ LOckup-Free Caches
+ ---------------------
+
+ When a memory request misses in the first level cache, the request is forwarded to the higher levels
+ of the memory hierarchy. The missing cache access cannot be completed unitl the forwarded request
+ returns with the data. A blocking cache system will stall the processor until the outstanding miss
+ is serviced. Although this solution has low complexity, stalling the processor on a cache miss can
+ severly degrade performance.
+
+ An alternative is to continue executing instructions while the miss is serviced. This requires the 
+ processor to implement some dependence tracking mechanism (e.g., a scoreboard) that allows the 
+ instrucxtions that do not depend on the missing instruction to proceed while the dependent ones
+ are blocked, waiting for the request to be serviced. Such a mechanism of course already exists in 
+ out-of-order processors. Another requirement is a nonblocking or lock-up free cache.
+
+ A lockup-free cache is one that allows the processor to issue new load/store instructions even in 
+ the presence of pending cache misses. The concept  of a lockup-free cache was first introduced
+ by Kroft. In his work, Kroft describes the use of special registers called miss status/information
+ holding registers (MSHRs) to hold information about pending misses. Kroft also describes an
+ input stack to hold the fetched data until they are written to the data array (this input stack is
+ called the fill buffer in modern microprocessors). In the context of lockup-free caches, misses
+ can be classified into three categories:
+
+ - Primary miss: the first miss to a cache block. This miss will initiate a fetch request to the 
+ 	higher level of the memory hierarchy.
+
+ - Secondary miss: subsequent miss to a cache block that is already being fetched due to a previous
+ 	primary miss.
+
+ - Structural-stall miss: a secondary miss that the available hardware resouruces (i.e., MSHRs)
+ 	cannot handle. Such a miss will cause a stall due uto a structural hazard.
+
+ Serveral implementations of MSHRs are possible, with different complexity/performance tradeoffs.
+ Here we focus on three such organizations.
+
